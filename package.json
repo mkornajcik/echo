@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --build && copyfiles -u 1 src/views/**/*.ejs dist/views && copyfiles -u 1 src/public/**/* dist/public",
+    "prebuild": "ts-node ./src/scripts/copy-assets.ts",
+    "build": "tsc --build",
     "start": "node ./dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.ts",
     "prod": "cross-env NODE_ENV=production node ./dist/server.js"
@@ -26,10 +27,12 @@
     "@types/node": "^22.13.9",
     "@types/sanitize-html": "^2.15.0",
     "@types/sharp": "^0.31.1",
+    "@types/shelljs": "^0.8.16",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.9",
     "sass": "^1.85.1",
+    "shelljs": "^0.10.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
