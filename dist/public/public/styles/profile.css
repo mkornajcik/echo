@@ -1,5 +1,3 @@
-/* Profile Page Styles */
-
 /* Profile Header */
 .profile-header {
   border-bottom: 1px solid var(--color-border);
@@ -89,10 +87,33 @@
   margin-bottom: 1rem;
 }
 
+.profile-action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .edit-profile-btn {
   border-radius: 9999px;
   font-weight: 700;
   padding: 0.5rem 1rem;
+}
+
+.message-user-btn {
+  border-radius: 9999px;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  transition: all 0.2s ease;
+}
+
+.message-user-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.message-user-btn i {
+  margin-right: 5px;
 }
 
 .profile-details {
@@ -337,6 +358,11 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+
+  .profile-action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -371,4 +397,31 @@
   background-color: rgba(239, 68, 68, 0.1);
   color: var(--danger);
   border-color: transparent;
+}
+
+/* Comment actions */
+.comment-actions-buttons {
+  display: flex;
+  justify-content: space-between;
+  max-width: 425px;
+}
+
+.comment-action {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: color var(--transition-speed);
+  font-size: 0.85rem;
+}
+
+.comment-action.like:hover {
+  color: #f91880;
+}
+
+.comment-action.reply:hover {
+  color: var(--color-primary);
 }

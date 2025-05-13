@@ -12,21 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.search = void 0;
 const prismaClient_1 = __importDefault(require("../prismaClient"));
-const catchAsync = require("../utils/catchAsync");
-exports.search = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const catchAsync_1 = require("../utils/catchAsync");
+exports.search = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { q, type = "all" } = req.query;
     const query = typeof q === "string" ? q.trim() : "";
-    const currentUserId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!userId) {
+        return res.status(403).json({ status: "error", message: "Authentication required" });
+    }
     if (!query) {
-        return res.status(200).render("search", {
-            title: "Search",
-            query: "",
-            results: { users: [], posts: [] },
-            type: type,
-            reqUser: req.user,
-        });
+        return res.status(404).json({ status: "error", message: "Provide a valid query" });
     }
     let users = [];
     let posts = [];
@@ -40,11 +38,10 @@ exports.search = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0
                 ],
             },
             select: {
-                id: true,
                 username: true,
                 usertag: true,
                 bio: true,
-                image: true,
+                location: true,
                 _count: {
                     select: {
                         followers: true,
@@ -54,19 +51,6 @@ exports.search = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0
             },
             take: 20,
         });
-        if (currentUserId) {
-            users = yield Promise.all(users.map((user) => __awaiter(void 0, void 0, void 0, function* () {
-                const isFollowing = yield prismaClient_1.default.follow.findUnique({
-                    where: {
-                        followerId_followingId: {
-                            followerId: currentUserId,
-                            followingId: user.id,
-                        },
-                    },
-                });
-                return Object.assign(Object.assign({}, user), { isFollowing: !!isFollowing });
-            })));
-        }
     }
     if (type === "all" || type === "posts") {
         posts = yield prismaClient_1.default.post.findMany({
@@ -76,13 +60,13 @@ exports.search = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0
                     mode: "insensitive",
                 },
             },
-            include: {
+            select: {
+                text: true,
+                image: true,
                 user: {
                     select: {
-                        id: true,
                         username: true,
                         usertag: true,
-                        image: true,
                     },
                 },
                 _count: {
@@ -92,32 +76,19 @@ exports.search = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0
                         reposts: true,
                     },
                 },
-                likes: currentUserId
-                    ? {
-                        where: {
-                            userId: currentUserId,
-                        },
-                    }
-                    : false,
-                reposts: currentUserId
-                    ? {
-                        where: {
-                            userId: currentUserId,
-                        },
-                    }
-                    : false,
             },
             orderBy: {
                 createdAt: "desc",
             },
-            take: 30,
+            take: 20,
         });
     }
-    res.status(200).render("search", {
-        title: `Search: ${query}`,
+    res.status(200).json({
+        status: "success",
         query,
-        results: { users, posts },
-        type: type,
-        reqUser: req.user,
+        data: {
+            users: users,
+            posts: posts,
+        },
     });
 }));

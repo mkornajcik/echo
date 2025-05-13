@@ -1,8 +1,4 @@
-/**
- * Emoji Picker functionality for Echo
- */
-
-// Common emoji sets organized by category
+// emoji sets organized by category
 const emojiData = {
   smileys: [
     "😀",
@@ -386,13 +382,11 @@ const emojiData = {
 
 // Initialize emoji picker
 function initEmojiPicker() {
-  // Create emoji picker elements for all emoji buttons
   document
     .querySelectorAll(
       '.compose-tools button[title="Emoji"], .comment-tools button[title="Emoji"], .message-input-actions button[title="Emoji"]'
     )
     .forEach((button) => {
-      // Check if this button already has a picker
       if (button.querySelector(".emoji-picker")) return;
 
       // Create emoji picker container
@@ -424,36 +418,28 @@ function initEmojiPicker() {
         header.appendChild(categoryBtn);
       });
 
-      // Create content area
       const content = document.createElement("div");
       content.className = "emoji-picker-content";
 
-      // Add initial emojis (smileys category)
       populateEmojiCategory(content, "smileys", emojiData.smileys);
 
-      // Assemble the picker
       emojiPicker.appendChild(header);
       emojiPicker.appendChild(content);
 
-      // Add the picker to the button's parent
       button.parentNode.appendChild(emojiPicker);
 
-      // Add click event to the button to toggle the picker
       button.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Close all other pickers first
         document.querySelectorAll(".emoji-picker.active").forEach((picker) => {
           if (picker !== emojiPicker) {
             picker.classList.remove("active");
           }
         });
 
-        // Toggle this picker
         emojiPicker.classList.toggle("active");
 
-        // If opening, make sure the first category is active
         if (emojiPicker.classList.contains("active")) {
           const firstCategoryBtn = emojiPicker.querySelector(".emoji-picker-header button");
           if (firstCategoryBtn) {
@@ -465,33 +451,28 @@ function initEmojiPicker() {
         }
       });
 
-      // Add click events to category buttons
       emojiPicker.querySelectorAll(".emoji-picker-header button").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
 
-          // Update active state
           emojiPicker.querySelectorAll(".emoji-picker-header button").forEach((b) => {
             b.classList.remove("active");
           });
           btn.classList.add("active");
 
-          // Update content
           const category = btn.getAttribute("data-category");
           content.innerHTML = "";
           populateEmojiCategory(content, category, emojiData[category]);
         });
       });
 
-      // Set first category as active
       const firstCategoryBtn = emojiPicker.querySelector(".emoji-picker-header button");
       if (firstCategoryBtn) {
         firstCategoryBtn.classList.add("active");
       }
     });
 
-  // Close emoji picker when clicking outside
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".emoji-picker") && !e.target.closest('button[title="Emoji"]')) {
       document.querySelectorAll(".emoji-picker.active").forEach((picker) => {
@@ -530,7 +511,7 @@ function populateEmojiCategory(container, categoryName, emojis) {
 
 // Insert emoji into the active textarea
 function insertEmoji(emoji) {
-  // Find the active textarea (the one that has focus or is closest to the active picker)
+  // Find the active textarea
   let textarea;
   const activePicker = document.querySelector(".emoji-picker.active");
 
@@ -569,12 +550,10 @@ function insertEmoji(emoji) {
     const event = new Event("input", { bubbles: true });
     textarea.dispatchEvent(event);
 
-    // Close the picker
     if (activePicker) {
       activePicker.classList.remove("active");
     }
   }
 }
 
-// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", initEmojiPicker);

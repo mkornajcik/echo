@@ -30,12 +30,12 @@
         <!-- Single Post -->
         <article class="post single-post">
             <div class="post-avatar">
-              <img src="/images/default.png" alt="User Avatar">
+              <img src="<%= post.user.image || '/images/default.png' %>" alt="User Avatar">
             </div>
             <div class="post-content">
               <div class="post-header">
                 <div class="post-user-info">
-                  <h3><%= post.user.username %></h3>
+                  <h3><a href="/profile/<%= post.user.id %>"><%= post.user.username %></a></h3>
                   <span class="username">@<%= post.user.usertag %></span>
                   <span class="post-time">· <%= formatTime(post.createdAt) %></span>
                 </div>
@@ -61,14 +61,14 @@
                   <span><%= post.comments ? post.comments.length : 0 %></span>
                 </button>
                 <button class="post-action repost" data-id="<%= post.id %>">
-                  <i class="fas fa-retweet"></i>
+                  <i class="<%= post.reposts && post.reposts.length > 0 ? 'reposted' : 'fas' %> fas fa-retweet"></i>
                   <span><%= post._count?.reposts || 0 %></span>
                 </button>
                 <button class="post-action like" data-id="<%= post.id %>">
                   <i class="<%= post.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
                   <span><%= post._count?.likes || 0 %></span>
                 </button>
-                <button class="post-action share">
+                <button class="post-action share" data-id="<%= post.id %>">
                   <i class="far fa-share-square"></i>
                 </button>
               </div>
@@ -78,12 +78,13 @@
         <!-- Comment Section -->
         <div class="comment-section">
           <!-- Comment Form -->
-          <form class="comment-form" action="/feed/post/<%= post.id %>" method="post">
+          <form class="comment-form" action="/posts/<%= post.id %>" method="post">
             <div class="comment-avatar">
-              <img src="/images/default.png" alt="User Avatar">
+              <img src="<%= reqUser.image || '/images/default.png' %>" alt="User Avatar">
             </div>
             <div class="comment-input-container">
-              <textarea name="commentText" placeholder="Add a comment..." required maxlength="280"></textarea>
+
+              <textarea id="commentText" name="commentText" placeholder="Add a comment..." required maxlength="280"></textarea>
               <div class="comment-actions">
                 <div class="comment-tools">
                   <button type="button" title="Media">
@@ -104,15 +105,15 @@
             
             <% if (post.comments && post.comments.length > 0) { %>
               <% post.comments.forEach(comment => { %>
-                <div class="comment" data-id="<%= comment.id %>">
+                <div class="comment" data-comment-id="<%= comment.id %>">
                   <div class="comment-avatar">
-                    <img src="/images/default.png" alt="User Avatar">
+                    <img src="<%= comment.user.image || '/images/default.png' %>" alt="User Avatar">
                   </div>
                   <div class="comment-content">
                     <div class="comment-header">
                       <div class="comment-user-info">
                         <% if (comment.user) { %>
-                          <h4><%= comment.user.username %></h4>
+                          <a href="/profile/<%= comment.user.id %>"><h4><%= comment.user.username %></h4></a>
                           <span class="username">@<%= comment.user.usertag %></span>
                         <% } else { %>
                           <h4>Unknown User</h4>
@@ -130,7 +131,7 @@
                       <p><%= comment.text %></p>
                     </div>
                     <div class="comment-actions-buttons">
-                      <button class="comment-action like" data-comment-id="<%= comment.id %>">
+                      <button class="comment-action like" data-comment-id="<%= comment.id %>" data-post-id="<%= comment.post.id %>">
                         <i class="<%= comment.likes && comment.likes.some(like => like.userId === user.id) ? 'fas' : 'far' %> fa-heart"></i>
                         <span><%= comment._count?.likes || 0 %></span>
                       </button>
@@ -165,6 +166,7 @@
   <script type="module" src="/js/post.js"></script>
   <script type="module" src="/js/emoji.js"></script>
   <script type="module" src="/js/likes.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
 </body>
 </html>
 

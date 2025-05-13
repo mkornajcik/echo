@@ -1,269 +1,536 @@
 import { showAlert } from "./alerts.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // DOM elements
+  // Initialize socket
+  const socket = io();
+
+  // Elements
   const elements = {
-    messageInput: document.querySelector(".message-input-container textarea"),
-    sendButton: document.querySelector(".send-message-btn"),
-    messageBody: document.querySelector(".message-body"),
+    messageForm: document.querySelector("#message-form"),
+    messageInput: document.querySelector("#message-input"),
+    sendButton: document.querySelector("#send-message-btn"),
+    messageBody: document.querySelector("#message-body"),
     conversationItems: document.querySelectorAll(".conversation-item"),
     newMessageBtn: document.querySelector(".new-message-btn"),
+    startConversationBtns: document.querySelectorAll(".start-conversation-btn"),
     newMessageModal: document.getElementById("new-message-modal"),
+    conversationInfoModal: document.getElementById("conversation-info-modal"),
     messagesSidebar: document.querySelector(".messages-sidebar"),
-    messageContent: document.querySelector(".message-content"),
+    messageContent: document.querySelector("#message-content"),
+    userSearch: document.getElementById("user-search"),
+    userList: document.getElementById("user-list"),
+    startChatBtn: document.getElementById("start-chat-btn"),
+    conversationSearch: document.getElementById("conversation-search"),
+    conversationList: document.getElementById("conversation-list"),
+    backButton: document.querySelector(".back-button"),
+    fileUpload: document.getElementById("file-upload"),
+    attachMediaBtn: document.getElementById("attach-media-btn"),
+    attachGifBtn: document.getElementById("attach-gif-btn"),
+    emojiBtn: document.getElementById("emoji-btn"),
+    conversationInfoBtn: document.getElementById("conversation-info-btn"),
+    conversationInfoContent: document.getElementById("conversation-info-content"),
+    statusIcon: document.querySelector(".message-status"),
+    closeBtn: document.querySelector(".close-modal"),
+    messageActions: document.querySelector(".message-input-actions"),
   };
 
-  // Initialize message input functionality
+  const currentUser = window.CURRENT_USER || {};
+  const activeConversation = window.ACTIVE_CONVERSATION || null;
+
+  // Track selected user for new conversation
+  let selectedUserId = null;
+
   initMessageInput();
 
-  // Initialize conversation list
   initConversationList();
 
-  // Initialize new message functionality
   initNewMessage();
 
-  // Initialize mobile view functionality
   initMobileView();
 
-  // Scroll message body to bottom on load
+  initSocketEvents();
+
+  // Scroll after all images have loaded
   if (elements.messageBody) {
-    elements.messageBody.scrollTop = elements.messageBody.scrollHeight;
+    const imgs = elements.messageBody.querySelectorAll("img");
+    if (imgs.length > 0) {
+      let loaded = 0;
+      imgs.forEach((img) => {
+        // whenever an image loads check if its the last one
+        img.addEventListener("load", () => {
+          loaded++;
+          if (loaded === imgs.length) {
+            scrollToBottom();
+          }
+        });
+        // if it was cached count it immediately
+        if (img.complete) {
+          loaded++;
+        }
+      });
+      // if all are cached already scroll right away
+      if (loaded === imgs.length) {
+        scrollToBottom();
+      }
+    } else {
+      // no images at all
+      scrollToBottom();
+    }
   }
 
-  /**
-   * Initializes message input and send functionality
-   */
+  // Msg input and send functionality
   function initMessageInput() {
-    const { messageInput, sendButton, messageBody } = elements;
+    const { messageForm, messageInput } = elements;
 
-    if (!messageInput || !sendButton) return;
+    if (!messageForm) return;
 
-    // Auto-resize textarea as user types
+    // Handle form submission
+    messageForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await sendMessage();
+    });
+
+    // Auto-resize textarea
     messageInput.addEventListener("input", function () {
       this.style.height = "auto";
       this.style.height = this.scrollHeight + "px";
-
-      // Enable/disable send button based on content
-      sendButton.disabled = this.value.trim().length === 0;
-    });
-
-    // Handle send button click
-    sendButton.addEventListener("click", sendMessage);
-
-    // Handle Enter key to send message (allow Shift+Enter for new line)
-    messageInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        if (!sendButton.disabled) {
-          sendMessage();
-        }
-      }
     });
   }
 
-  /**
-   * Sends a message and simulates a response
-   */
-  function sendMessage() {
-    const { messageInput, sendButton, messageBody } = elements;
+  const mediaButton = document.getElementById("attach-media-btn");
+  const imageUpload = document.getElementById("message-image-upload");
+  const messageForm = document.getElementById("message-form");
 
-    if (messageInput.value.trim().length === 0) return;
+  //  Image upload
+  if (mediaButton && imageUpload) {
+    mediaButton.addEventListener("click", () => {
+      imageUpload.click();
+    });
+  }
 
-    // Get the message text
+  if (imageUpload) {
+    imageUpload.addEventListener("change", handleImageSelect);
+  }
+
+  if (messageForm) {
+    messageForm.addEventListener("submit", handleImageSubmit);
+  }
+
+  function handleImageSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      showAlert("error", "Only image files are allowed", 3000);
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showAlert("error", "Image size must be less than 5MB", 3000);
+      e.target.value = "";
+      return;
+    }
+
+    showAlert("success", `Image "${file.name}" selected. Press send.`, 4000);
+    elements.messageInput.disabled = true;
+    elements.attachGifBtn.disabled = true;
+    elements.emojiBtn.disabled = true;
+    elements.messageInput.value = "";
+    elements.messageInput.placeholder = `Image "${file.name}" selected.`;
+  }
+
+  async function handleImageSubmit(e) {
+    e.preventDefault();
+    const imageFile = imageUpload.files[0];
+
+    if (!imageFile) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    try {
+      showAlert("info", "Posting...", 1500);
+      const response = await axios.post(`/files/${activeConversation.id}/message`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.data.status === "success") {
+        showAlert("success", "Uploaded successfully!", 2000);
+        const message = response.data.data.message; // Get message from response
+
+        socket.emit("newMessage", {
+          conversationId: activeConversation.id,
+          message: {
+            id: message.id,
+            image: message.image,
+            createdAt: message.createdAt,
+            senderId: message.senderId,
+            readAt: message.readAt,
+          },
+        });
+      }
+    } catch (error) {
+      if (error.status === 429) {
+        showAlert("error", "Too many requests. Try again later.", 5000);
+      } else {
+        showAlert("error", error.response?.data?.message || "Failed to upload image", 3000);
+      }
+    } finally {
+      imageUpload.value = "";
+      elements.messageInput.disabled = false;
+      elements.attachGifBtn.disabled = false;
+      elements.emojiBtn.disabled = false;
+      elements.messageInput.value = "";
+      elements.messageInput.placeholder = "Type your message...";
+    }
+  }
+
+  async function markAsRead() {
+    if (!activeConversation) return;
+
+    try {
+      await axios.patch(`/api/messages/${activeConversation.id}/read`);
+    } catch (error) {
+      console.error("Error marking conversation as read:", error);
+    }
+  }
+
+  async function sendMessage() {
+    const { messageInput, sendButton } = elements;
+
+    if (!activeConversation) {
+      showAlert("error", "No active conversation", 2000);
+      return;
+    }
+
     const messageText = messageInput.value.trim();
+    if (messageText.length === 0) return;
 
-    // Add user message to chat
-    addMessageToChat("sent", messageText);
-
-    // Clear the input
-    messageInput.value = "";
-    messageInput.style.height = "auto";
     sendButton.disabled = true;
 
-    // Simulate a response after a delay
-    setTimeout(() => {
-      addMessageToChat("received", "Thanks for your message! I'll get back to you soon.");
-      showAlert("info", "New message from Jane Smith", 2000);
-    }, 2000);
+    try {
+      const response = await axios.post(`/api/messages/${activeConversation.id}`, {
+        content: messageText,
+      });
+
+      if (response.data.status === "success") {
+        const message = response.data.data.message;
+
+        messageInput.value = "";
+
+        socket.emit("newMessage", {
+          conversationId: activeConversation.id,
+          message: {
+            id: message.id,
+            content: message.content,
+            createdAt: message.createdAt,
+            senderId: message.senderId,
+            readAt: message.readAt,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      showAlert("error", "Failed to send message. Please try again.", 3000);
+    } finally {
+      sendButton.disabled = false;
+    }
   }
 
-  /**
-   * Adds a message to the chat window
-   * @param {string} type - "sent" or "received"
-   * @param {string} text - Message content
-   */
-  function addMessageToChat(type, text) {
+  function addMessageToChat(messageId, type, content, image, timestamp, isRead = false) {
     const { messageBody } = elements;
     if (!messageBody) return;
 
     const messageElement = document.createElement("div");
     messageElement.className = `message ${type}`;
+    messageElement.dataset.messageId = messageId;
 
-    const currentTime = new Date().toLocaleTimeString([], {
+    const currentTime = new Date(timestamp).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
 
-    messageElement.innerHTML = `
-      <div class="message-bubble">
-        <p>${text}</p>
-      </div>
-      <span class="message-time">${currentTime}</span>
-    `;
+    const readStatusIcon =
+      type === "sent" ? `<i class="${isRead ? "fas fa-check-double" : "fas fa-check"} message-status"></i>` : "";
 
+    // Create message content
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble";
+
+    if (image) {
+      const img = document.createElement("img");
+      img.className = "message-image";
+      img.alt = "Uploaded image";
+      img.src = image;
+
+      // Scroll when image loads
+      img.onload = () => scrollToBottom();
+
+      // If image is cached and already loaded
+      if (img.complete) scrollToBottom();
+
+      bubble.appendChild(img);
+    } else {
+      const text = document.createElement("p");
+      text.textContent = content;
+      bubble.appendChild(text);
+    }
+
+    // Create time container
+    const timeContainer = document.createElement("span");
+    timeContainer.className = "message-time";
+    timeContainer.innerHTML = `${currentTime} ${readStatusIcon}`;
+
+    // Assemble message
+    messageElement.appendChild(bubble);
+    messageElement.appendChild(timeContainer);
     messageBody.appendChild(messageElement);
-    messageBody.scrollTop = messageBody.scrollHeight;
+
+    // Initial scroll
+    scrollToBottom();
   }
 
-  /**
-   * Initializes conversation list functionality
-   */
+  function scrollToBottom() {
+    if (!elements.messageBody) return;
+
+    elements.messageBody.scrollTo({
+      top: elements.messageBody.scrollHeight,
+      behavior: "smooth",
+    });
+
+    markAsRead();
+  }
+
   function initConversationList() {
     const { conversationItems } = elements;
 
     conversationItems.forEach((item) => {
       item.addEventListener("click", function () {
-        // Update active conversation
-        conversationItems.forEach((i) => i.classList.remove("active"));
-        this.classList.add("active");
-        this.classList.remove("unread");
-
-        // Get conversation details
-        const avatar = this.querySelector(".conversation-avatar img").src;
-        const name = this.querySelector("h3").textContent;
-        const isOnline = this.querySelector(".online-indicator") !== null;
-
-        // Update message header
-        updateMessageHeader(name, avatar, isOnline);
-
-        // Show notification
-        showAlert("info", `Viewing conversation with ${name}`, 1500);
-
-        // On mobile, show the message content and hide the sidebar
-        handleMobileConversationView();
+        const conversationId = this.dataset.conversationId;
+        if (conversationId) {
+          window.location.href = `/messages/${conversationId}`;
+        }
       });
     });
-  }
 
-  /**
-   * Updates the message header with user information
-   */
-  function updateMessageHeader(name, avatar, isOnline) {
-    const messageHeader = document.querySelector(".message-user-info");
-    if (!messageHeader) return;
+    // Handle conversation search
+    if (elements.conversationSearch) {
+      elements.conversationSearch.addEventListener("input", function () {
+        const searchTerm = this.value.toLowerCase().trim();
 
-    messageHeader.innerHTML = `
-      <div class="message-avatar">
-        <img src="${avatar}" alt="${name}">
-        ${isOnline ? '<span class="online-indicator"></span>' : ""}
-      </div>
-      <div>
-        <h3>${name}</h3>
-        <p>@${name.toLowerCase().replace(/\s+/g, "")}</p>
-      </div>
-    `;
-  }
+        document.querySelectorAll(".conversation-item").forEach((item) => {
+          const username = item.querySelector("h3").textContent.toLowerCase();
 
-  /**
-   * Handles mobile view for conversations
-   */
-  function handleMobileConversationView() {
-    const { messagesSidebar, messageContent } = elements;
-
-    if (window.innerWidth <= 768 && messagesSidebar && messageContent) {
-      messagesSidebar.classList.remove("active");
-      messageContent.style.display = "flex";
+          if (username.includes(searchTerm) || searchTerm === "") {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
     }
   }
 
-  /**
-   * Initializes new message functionality
-   */
   function initNewMessage() {
-    const { newMessageBtn, newMessageModal } = elements;
-    const closeModalBtn = newMessageModal?.querySelector(".close-modal");
-
-    if (!newMessageBtn || !newMessageModal) return;
-
-    newMessageBtn.addEventListener("click", () => {
-      newMessageModal.classList.add("active");
-    });
-
-    // Close modal function
-    const closeModal = () => {
-      newMessageModal.classList.remove("active");
-    };
-
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener("click", closeModal);
-    }
+    const { newMessageModal, userList } = elements;
 
     // Close when clicking outside
-    newMessageModal.addEventListener("click", (e) => {
-      if (e.target === newMessageModal) {
-        closeModal();
+    window.addEventListener("click", (e) => {
+      if (e.target === newMessageModal || e.target === elements.conversationInfoModal) {
+        closeModals();
       }
     });
 
-    // User item click functionality
-    const userItems = newMessageModal.querySelectorAll(".user-item");
-    const nextBtn = newMessageModal.querySelector(".form-actions .btn");
-
-    userItems.forEach((item) => {
-      item.addEventListener("click", function () {
-        // Toggle selected state
-        userItems.forEach((i) => i.classList.remove("selected"));
-        this.classList.add("selected");
-
-        // Enable next button
-        if (nextBtn) {
-          nextBtn.disabled = false;
-        }
+    if (elements.closeBtn) {
+      elements.closeBtn.addEventListener("click", () => {
+        closeModals();
       });
-    });
+    }
 
-    // Next button functionality
-    if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-        const selectedUser = newMessageModal.querySelector(".user-item.selected");
-        if (selectedUser) {
-          const userName = selectedUser.querySelector("h4").textContent;
-          closeModal();
-          showAlert("success", `Started a new conversation with ${userName}`, 2000);
+    // User selection
+    if (userList) {
+      userList.addEventListener("click", (e) => {
+        const userItem = e.target.closest(".user-item");
+        if (!userItem) return;
+
+        // Toggle selected state
+        document.querySelectorAll(".user-item").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        userItem.classList.add("selected");
+        selectedUserId = userItem.dataset.userId;
+      });
+    }
+
+    // Conversation info button
+    if (elements.conversationInfoBtn) {
+      elements.conversationInfoBtn.addEventListener("click", () => {
+        if (!activeConversation) return;
+
+        // Populate conversation info
+        if (elements.conversationInfoContent) {
+          const userInfo = document.querySelector(".message-user-info");
+          const otherUser = document.querySelector(".message-user-info h3").textContent;
+          const otherUserTag = document.querySelector(".message-user-info p").textContent;
+          const otherUserId = userInfo.dataset.userId;
+
+          elements.conversationInfoContent.innerHTML = `
+            <div class="conversation-info">
+              <div class="conversation-info-avatar">
+                <img src="${otherUser.image || "/images/default.png"}" alt="${otherUser}">
+              </div>
+              <h3>${otherUser}</h3>
+              <p>${otherUserTag}</p>
+              <div class="conversation-actions">
+                <a href="/profile/${otherUserId}" class="btn btn-primary">
+                  View Profile
+                </a>
+              </div>
+            </div>
+          `;
+
+          // Show the modal
+          elements.conversationInfoModal.classList.add("active");
         }
       });
     }
   }
 
-  /**
-   * Initializes mobile view functionality
-   */
+  function closeModals() {
+    if (elements.newMessageModal) {
+      elements.newMessageModal.classList.remove("active");
+    }
+
+    if (elements.conversationInfoModal) {
+      elements.conversationInfoModal.classList.remove("active");
+    }
+
+    // Reset selected user
+    selectedUserId = null;
+
+    // Disable start chat button
+    if (elements.startChatBtn) {
+      elements.startChatBtn.disabled = true;
+    }
+  }
+
   function initMobileView() {
-    // Add back button for mobile view
-    const addBackButton = () => {
+    // Handle back button for mobile view
+    if (elements.backButton) {
+      elements.backButton.addEventListener("click", () => {
+        const { messagesSidebar, messageContent } = elements;
+
+        if (messagesSidebar && messageContent) {
+          messagesSidebar.classList.add("active");
+          messageContent.style.display = "none";
+        }
+      });
+    }
+
+    // Show/hide elements based on screen size
+    const handleResize = () => {
       if (window.innerWidth <= 768) {
-        const messageHeader = document.querySelector(".message-header");
-        if (messageHeader && !messageHeader.querySelector(".back-btn")) {
-          const backBtn = document.createElement("button");
-          backBtn.className = "message-action-btn back-btn";
-          backBtn.innerHTML = '<i class="fas fa-arrow-left"></i>';
-
-          backBtn.addEventListener("click", () => {
-            const { messagesSidebar, messageContent } = elements;
-
-            if (messagesSidebar && messageContent) {
-              messagesSidebar.classList.add("active");
-              messageContent.style.display = "none";
-            }
-          });
-
-          messageHeader.insertBefore(backBtn, messageHeader.firstChild);
+        // On mobile, if we have an active conversation, hide the sidebar
+        if (activeConversation && elements.messagesSidebar && elements.messageContent) {
+          elements.messagesSidebar.classList.remove("active");
+          elements.messageContent.style.display = "flex";
         }
       }
     };
 
     // Call on load and resize
-    addBackButton();
-    window.addEventListener("resize", addBackButton);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+  }
+
+  function initSocketEvents() {
+    // Connect to socket
+    socket.on("connect", () => {
+      if (currentUser && currentUser.id) {
+        socket.emit("joinUser", { userId: currentUser.id });
+      }
+
+      // Join conversation room if active
+      if (activeConversation) {
+        socket.emit("joinConversation", {
+          conversationId: activeConversation.id,
+          userId: currentUser.id,
+        });
+      }
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Handle new messages
+    socket.on("newMessage", (data) => {
+      if (activeConversation && data.conversationId === activeConversation.id) {
+        const messageType = data.message.senderId === currentUser.id ? "sent" : "received";
+        addMessageToChat(
+          data.message.id,
+          messageType,
+          data.message.content,
+          data.message.image,
+          data.message.createdAt,
+          data.message.readAt
+        );
+        scrollToBottom();
+      } else {
+        const previewText = data.message.image ? "📷 Image" : data.message.content;
+        updateConversationPreview(data.conversationId, previewText);
+      }
+    });
+
+    // Handle disconnect
+    socket.on("disconnect", () => {
+      console.log("Disconnected from socket server");
+    });
+  }
+
+  function updateConversationPreview(conversationId, messageText) {
+    const conversationItem = document.querySelector(`.conversation-item[data-conversation-id="${conversationId}"]`);
+    if (!conversationItem) return;
+
+    // Update preview text
+    const previewElement = conversationItem.querySelector(".conversation-preview");
+    if (previewElement) {
+      previewElement.textContent = messageText.length > 30 ? messageText.substring(0, 30) + "..." : messageText;
+    }
+
+    // Update time
+    const timeElement = conversationItem.querySelector(".conversation-time");
+    if (timeElement) {
+      timeElement.textContent = "now";
+    }
+
+    // Mark as unread if not active conversation
+    if (!activeConversation || activeConversation.id !== conversationId) {
+      conversationItem.classList.add("unread");
+    }
+
+    // Move conversation to top of list
+    const conversationList = conversationItem.parentElement;
+    if (conversationList) {
+      conversationList.prepend(conversationItem);
+    }
+  }
+
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
   }
 });

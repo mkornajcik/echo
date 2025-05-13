@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         if (isFollowing) {
           // Unfollow user
-          const response = await axios.delete(`/profile/follow/${userId}`);
+          const response = await axios.delete(`/api/profile/${userId}/unfollow/`);
 
           this.classList.remove("btn-secondary");
           this.classList.add("btn-primary");
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showAlert("success", response.data.message || "Unfollowed successfully", 2000);
         } else {
           // Follow user
-          const response = await axios.post(`/profile/follow/${userId}`);
+          const response = await axios.post(`/api/profile/${userId}/follow/`);
 
           this.classList.remove("btn-primary");
           this.classList.add("btn-secondary");

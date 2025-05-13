@@ -1,25 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Create multiple birds with different speeds and paths
   createMultipleBirds();
-
-  // Add subtle background animation
   animateBackground();
-
-  // Add error message typing effect
   typeErrorMessage();
 
-  // Function to create multiple birds
+  // create multiple birds animation
   function createMultipleBirds() {
     const errorAnimation = document.querySelector(".error-animation");
     const colors = ["#A91D3A", "#C73659"];
 
-    // Remove the original bird container
     const originalBird = document.querySelector(".bird-container");
     if (originalBird) {
       originalBird.remove();
     }
 
-    // Create 3 birds with different animations
+    // Create 3 birds with different animation
     for (let i = 0; i < 3; i++) {
       const birdContainer = document.createElement("div");
       birdContainer.className = "bird-container";
@@ -27,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const bird = document.createElement("div");
       bird.className = "bird";
 
-      // Customize bird styles
+      // Customize styles
       bird.style.width = `${20 + i * 5}px`;
       bird.style.height = `${20 + i * 5}px`;
 
@@ -37,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       birdContainer.style.animation = `fly ${duration}s linear ${delay}s infinite`;
       birdContainer.style.bottom = `${10 + i * 20}px`;
 
-      // Set custom bird color
+      // Set custom color
       bird.style.setProperty("--error-primary", colors[i % colors.length]);
       bird.style.setProperty("--error-secondary", colors[(i + 1) % colors.length]);
 
@@ -46,11 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to animate background
+  // animate background
   function animateBackground() {
     const errorCard = document.querySelector(".error-card");
 
-    // Create subtle gradient animation
+    // Create gradient
     let gradientPos = 0;
 
     function updateGradient() {
@@ -73,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateGradient();
   }
 
-  // Function to add typing effect to error message
+  // add typing effect to error message
   function typeErrorMessage() {
     const errorMessage = document.querySelector(".error-message");
     if (!errorMessage) return;
@@ -93,10 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Start typing after a short delay
-    setTimeout(typeWriter, 200);
+    setTimeout(typeWriter, 100);
   }
 
-  // Add click event for the "Go Back" button
+  //click event for the back button
   const goBackBtn = document.querySelector(".error-actions .btn-secondary");
   if (goBackBtn) {
     goBackBtn.addEventListener("click", (e) => {

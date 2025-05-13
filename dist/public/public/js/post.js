@@ -5,18 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const commentForm = document.querySelector(".comment-form");
   const commentTextarea = document.querySelector(".comment-form textarea");
   const commentBtn = document.querySelector(".comment-btn");
+  const commentList = document.querySelector(".comment-list");
 
-  // Track if we've shown the warning alert to avoid spamming
   let warningAlertShown = false;
   let errorAlertShown = false;
 
   if (commentTextarea && commentBtn) {
-    // Add a maxlength attribute if it doesn't exist
+    // Add a maxlength attribute
     if (!commentTextarea.hasAttribute("maxlength")) {
       commentTextarea.setAttribute("maxlength", "280");
     }
 
-    // Add a character counter to the comment form if it doesn't exist
+    // Add a character counter
     let characterCount;
     const commentActions = document.querySelector(".comment-actions");
 
@@ -28,36 +28,31 @@ document.addEventListener("DOMContentLoaded", () => {
       characterCount.style.marginRight = "0.5rem";
       characterCount.textContent = "280";
 
-      // Insert before the comment button
       commentActions.querySelector(".comment-tools").insertAdjacentElement("afterend", characterCount);
     } else {
       characterCount = document.querySelector(".comment-character-count");
     }
 
-    // Enable/disable comment button based on textarea content and monitor character count
+    // Enable/disable comment
     commentTextarea.addEventListener("input", function () {
       const maxLength = Number.parseInt(this.getAttribute("maxlength") || "280");
       const currentLength = this.value.length;
       const remaining = maxLength - currentLength;
 
-      // Update character count if it exists
       if (characterCount) {
         characterCount.textContent = remaining;
 
-        // Change color based on remaining characters
         if (remaining <= 0) {
-          characterCount.style.color = "#ef4444"; // Red
+          characterCount.style.color = "#ef4444";
 
-          // Show error alert if not already shown
           if (!errorAlertShown) {
             showAlert("error", "You've exceeded the character limit. Please shorten your comment.", 3000);
             errorAlertShown = true;
             warningAlertShown = false; // Reset warning flag
           }
         } else if (remaining <= 20) {
-          characterCount.style.color = "#f59e0b"; // Amber/Orange
+          characterCount.style.color = "#f59e0b";
 
-          // Show warning alert when approaching limit (only once)
           if (remaining <= 10 && !warningAlertShown) {
             showAlert("warning", `You're approaching the character limit. ${remaining} characters remaining.`, 3000);
             warningAlertShown = true;
@@ -103,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Send comment to server
       axios
-        .post(`/feed/post/${postId}`, {
+        .post(`/api/comments/posts/${postId}`, {
           commentText: commentText,
         })
         .then((response) => {
@@ -133,8 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Error posting comment:", error);
           commentBtn.disabled = false;
           commentBtn.textContent = "Reply";
-
-          if (error.response && error.response.data && error.response.data.message) {
+          if (error.status === 429) {
+            showAlert("error", "Too many requests. Try again later.", 5000);
+          } else if (error.response && error.response.data && error.response.data.message) {
             showAlert("error", error.response.data.message);
           } else {
             showAlert("error", "Failed to post comment. Please try again.");
@@ -153,9 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const res = await axios({
           method: "DELETE",
-          url: `/feed/post/${postId}`,
+          url: `/api/posts/${postId}`,
         });
-        if (res.data.status === "success") {
+        if (res.status === 204) {
           showAlert("success", "Post deleted successfully.");
           window.setTimeout(() => {
             location.assign("/feed");
@@ -179,9 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const res = await axios({
             method: "DELETE",
-            url: `/feed/post/${postId}/comment/${commentId}`,
+            url: `/api/comments/posts/${postId}/comment/${commentId}`,
           });
-          if (res.data.status === "success") {
+          if (res.status === 204) {
             showAlert("success", "Comment deleted successfully.");
             window.setTimeout(() => {
               location.reload();
@@ -213,7 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Scroll to the comment form
       commentForm.scrollIntoView({ behavior: "smooth" });
 
-      // Show a subtle info alert
       showAlert("info", `Replying to ${username}`, 2000);
     });
   });

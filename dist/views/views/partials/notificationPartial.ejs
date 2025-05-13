@@ -1,0 +1,115 @@
+  <% if (notification.type === "LIKE_POST" ||  notification.type === "LIKE_COMMENT") { %>
+      <div class="notification-item" data-refid="<%= notification.post.id %>">
+        <div class="notification-icon like">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="notification-content">
+          <div class="notification-avatar-group">
+            <div class="notification-avatar">
+              <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+            </div>
+          </div>
+          <div class="notification-text">
+            <p><strong><a href="/profile/<%= notification.sender.id %>"><%= notification.sender.username %></a></strong> liked your post</p>
+            <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+          </div>
+        </div>
+        <div class="notification-post">
+          <p><%= notification.post.text %></p>
+        </div>
+      </div>
+  <% } else if ( notification.type === "REPLY") { %>
+    <div class="notification-item" data-refid="<%= notification.post.id %>">
+      <div class="notification-icon comment">
+        <i class="fas fa-comment"></i>
+      </div>
+      <div class="notification-content">
+        <div class="notification-avatar-group">
+          <div class="notification-avatar">
+            <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+          </div>
+        </div>
+        <div class="notification-text">
+          <p><strong><a href="/profile/<%= notification.sender.id %>"><%= notification.sender.username %></a></strong> replied to your post</p>
+          <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+        </div>
+      </div>
+      <div class="notification-post">
+        <p><%= notification.comment.text %></p>
+      </div>
+    </div>
+  <% } else if ( notification.type === "NEW_FOLLOWER") { %>
+    <div class="notification-item" data-followid="<%= notification.sender.id %>">
+      <div class="notification-icon follow">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <div class="notification-content">
+        <div class="notification-avatar-group">
+          <div class="notification-avatar">
+            <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+          </div>
+        </div>
+        <div class="notification-text">
+          <p><strong><a href="/profile/<%= notification.sender.id %>"><%= notification.sender.username %></a></strong> followed you</p>
+          <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+        </div>
+      </div>
+      <div class="notification-action">
+        <button class="btn btn-secondary"><a href="/profile/<%= notification.sender.id %>">View profile</a></button>
+      </div>
+    </div>
+  <% } else if ( notification.type === "REPOST_POST") { %>
+    <div class="notification-item" data-refid="<%= notification.post.id %>">
+      <div class="notification-icon repost">
+        <i class="fas fa-retweet"></i>
+      </div>
+      <div class="notification-content">
+        <div class="notification-avatar-group">
+          <div class="notification-avatar">
+            <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+          </div>
+        </div>
+        <div class="notification-text">
+          <p><strong><a href="/profile/<%= notification.sender.id %>"><%= notification.sender.username %></a></strong> reposted your post</p>
+          <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+        </div>
+      </div>
+      <div class="notification-post">
+        <p><%= notification.post.text %></p>
+      </div>
+    </div>
+    <% } else if ( notification.type === "MESSAGE") { %>
+      <div class="notification-item" data-conversationid="<%= notification.conversationId %>">
+        <div class="notification-icon message">
+          <i class="fas fa-message"></i>
+        </div>
+        <div class="notification-content">
+          <div class="notification-avatar-group">
+            <div class="notification-avatar">
+              <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+            </div>
+          </div>
+          <div class="notification-text">
+            <p><strong><a href="/profile/<%= notification.senderId %>"><%= notification.sender.username %></a></strong> sent you a message</p>
+            <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+          </div>
+        </div>
+      </div>     
+  <% } else if ( notification.type === "TAG") { %>
+      <div class="notification-item" data-refid="<%= notification.post.id %>">
+        <div class="notification-icon mention">
+          <i class="fa-solid fa-at"></i>
+        </div>
+        <div class="notification-content">
+          <div class="notification-avatar-group">
+            <div class="notification-avatar">
+              <img src="<%= notification.sender.image || '/images/default.png' %>" alt="User Avatar">
+            </div>
+          </div>
+          <div class="notification-text">
+            <p><strong><a href="/profile/<%= notification.senderId %>"><%= notification.sender.username %></a></strong> mentioned you in a comment</p>
+            <p class="notification-time"><%= formatTime(notification.createdAt) %></p>
+          </div>
+        </div>
+      </div>     
+  <% } %>

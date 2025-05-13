@@ -6,7 +6,10 @@ const initializeLikes = (parentElement = document) => {
 
   postLikeButtons.forEach((button) => {
     button.addEventListener("click", async function (e) {
-      e.stopPropagation(); // Prevent navigation when clicking like button
+      e.stopPropagation();
+
+      if (this.disabled) return; // Already processing
+      this.disabled = true;
 
       const postId = this.dataset.id;
       const icon = this.querySelector("i");
@@ -14,16 +17,17 @@ const initializeLikes = (parentElement = document) => {
 
       if (!postId) {
         console.error("Post ID not found on like button");
+        this.disabled = false;
         return;
       }
 
       try {
-        const response = await axios.post(`/feed/post/${postId}/like`);
+        const response = await axios.post(`/api/posts/${postId}/like`);
 
         if (response.data.status === "success") {
           const { liked, count } = response.data.data;
 
-          // Update UI based on liked status
+          // Update based on liked status
           if (liked) {
             icon.classList.remove("far");
             icon.classList.add("fas");
@@ -36,12 +40,14 @@ const initializeLikes = (parentElement = document) => {
             showAlert("info", "Like removed", 1500);
           }
 
-          // Update the count with the value from the server
+          // Update the count
           countSpan.textContent = count;
         }
       } catch (error) {
         console.error("Error toggling post like:", error);
         showAlert("error", "Couldn't update like status. Please try again.", 3000);
+      } finally {
+        this.disabled = false;
       }
     });
   });
@@ -51,7 +57,10 @@ const initializeLikes = (parentElement = document) => {
 
   postRepostButtons.forEach((button) => {
     button.addEventListener("click", async function (e) {
-      e.stopPropagation(); // Prevent navigation when clicking repost button
+      e.stopPropagation();
+
+      if (this.disabled) return; // Already processing
+      this.disabled = true;
 
       const postId = this.dataset.id;
       const icon = this.querySelector("i");
@@ -59,33 +68,64 @@ const initializeLikes = (parentElement = document) => {
 
       if (!postId) {
         console.error("Post ID not found on repost button");
+        this.disabled = false;
         return;
       }
 
       try {
-        const response = await axios.post(`/feed/post/${postId}/repost`);
+        const response = await axios.post(`/api/posts/${postId}/repost`);
 
         if (response.data.status === "success") {
           const { reposted, count } = response.data.data;
 
-          // Update UI based on reposted status
+          // Update based on reposted status
           if (reposted) {
             icon.style.color = "#17BF63"; // Green repost color
+            icon.classList.add("reposted");
             showAlert("success", "Post reposted!", 1500);
           } else {
+            icon.classList.remove("reposted");
             icon.style.color = "";
             showAlert("info", "Repost removed", 1500);
           }
 
-          // Update the count with the value from the server
+          // Update the count
           countSpan.textContent = count;
         }
       } catch (error) {
         console.error("Error toggling post repost:", error);
-        // Check if the error response has a specific message
         const message = error.response?.data?.message || "Couldn't update repost status. Please try again.";
         showAlert("error", message, 3000);
+      } finally {
+        this.disabled = false;
       }
+    });
+  });
+
+  // Handle post share
+  const postShareButtons = parentElement.querySelectorAll(".post-action.share");
+
+  postShareButtons.forEach((button) => {
+    button.addEventListener("click", async function (e) {
+      e.stopPropagation();
+
+      const baseUrl = window.location.origin;
+      const postId = this.dataset.id;
+
+      navigator.clipboard.writeText(`${baseUrl}/posts/${postId}`);
+      showAlert("info", "Copied to clipboard", 1500);
+    });
+  });
+
+  // Handle post comment button
+  const postCommentButtons = parentElement.querySelectorAll(".post-action.comment");
+
+  postCommentButtons.forEach((button) => {
+    button.addEventListener("click", async function (e) {
+      e.stopPropagation();
+
+      const postId = this.dataset.id;
+      window.location.href = `/posts/${postId}#commentText`;
     });
   });
 
@@ -96,19 +136,22 @@ const initializeLikes = (parentElement = document) => {
     button.addEventListener("click", async function (e) {
       e.stopPropagation(); // Prevent event bubbling
 
+      if (this.disabled) return; // Already processing
+      this.disabled = true;
+
       const commentId = this.getAttribute("data-comment-id");
       const icon = this.querySelector("i");
       const countSpan = this.querySelector("span");
-      const postId = window.location.pathname.split("/").pop();
+      const postId = this.getAttribute("data-post-id");
 
-      if (!commentId) {
-        console.error("Comment ID not found on like button");
+      if (!commentId || !postId) {
+        console.error("Comment ID or Post ID not found on like button");
+        this.disabled = false;
         return;
       }
 
       try {
-        // Make API call to toggle like status
-        const response = await axios.post(`/feed/post/${postId}/comment/${commentId}/like`);
+        const response = await axios.post(`/api/comments/posts/${postId}/comment/${commentId}/like`);
 
         if (response.data.status === "success") {
           const { liked, count } = response.data.data;
@@ -127,18 +170,19 @@ const initializeLikes = (parentElement = document) => {
             showAlert("info", "Like removed", 1500);
           }
 
-          // Update the count with the value from the server
+          // Update the count
           countSpan.textContent = count;
         }
       } catch (error) {
         console.error("Error toggling comment like:", error);
         showAlert("error", "Couldn't update like status. Please try again.", 3000);
+      } finally {
+        this.disabled = false;
       }
     });
   });
 };
 
-// Initialize likes when DOM content is loaded for the initial page load
 document.addEventListener("DOMContentLoaded", () => initializeLikes());
 
 export { initializeLikes };

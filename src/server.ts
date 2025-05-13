@@ -13,8 +13,9 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 
 // Create HTTP server
-const server = app.listen(process.env.PORT, () => {
-  console.log(`Server running on http://127.0.0.1:${process.env.PORT}`);
+const port = parseInt(process.env.PORT!, 10) || 3000;
+const server = app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on 0.0.0.0:${port}`);
 });
 
 // Set up socket.io

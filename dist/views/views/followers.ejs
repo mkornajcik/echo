@@ -40,7 +40,7 @@
             <div class="follow-item">
               <div class="follow-avatar">
                 <a href="/profile/<%= follow.follower.id %>">
-                  <img src="/images/default.png" alt="<%= follow.follower.username %>'s Avatar">
+                  <img src="<%= follow.follower.image || '/images/default.png' %>" alt="<%= follow.follower.username %>'s Avatar">
                 </a>
               </div>
               <div class="follow-info">
@@ -84,7 +84,9 @@
   
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
   <script type="module" src="/js/follow.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
 </body>
 </html>
 

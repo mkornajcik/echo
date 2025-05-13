@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchForm = document.querySelector(".search-form");
 
   if (searchInput && clearButton && searchForm) {
-    // Show/hide clear button based on input content
     searchInput.addEventListener("input", function () {
       if (this.value.trim() !== "") {
         clearButton.classList.remove("hidden");

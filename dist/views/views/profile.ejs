@@ -20,73 +20,7 @@
     <!-- Main Content -->
     <main class="main-content">
       <!-- Profile Header -->
-      <div class="profile-header">
-        <div class="profile-cover">
-          <img src="/images/default-banner.png" alt="Cover Image">
-          <button class="edit-cover-btn">
-            <i class="fas fa-camera"></i>
-          </button>
-        </div>
-        
-        <div class="profile-info">
-          <div class="profile-avatar">
-            <img src="/images/default.png" alt="<%= user.username %>'s Avatar">
-            <button class="edit-avatar-btn">
-              <i class="fas fa-camera"></i>
-            </button>
-          </div>
-          
-          <div class="profile-actions">
-            <% if (reqUser && user.id === reqUser.id) { %>
-              <button class="btn btn-secondary edit-profile-btn">Edit Profile</button>
-            <% } else if (reqUser) { %>
-              <button class="btn <%= isCurrentUserFollowing ? 'btn-secondary' : 'btn-primary' %> follow-btn"
-                      data-user-id="<%= user.id %>"
-                      data-is-following="<%= isCurrentUserFollowing %>">
-                <%= isCurrentUserFollowing ? 'Following' : 'Follow' %>
-              </button>
-            <% } else { %>
-              <button class="btn btn-primary" disabled title="Log in to follow">Follow</button>
-            <% } %>
-          </div>
-          
-          
-          <div class="profile-details">
-            <h1 class="profile-name"><%= user.username %></h1>
-            <p class="profile-username">@<%= user.usertag %></p>
-            
-            <div class="profile-bio">
-              <p><%= user.bio || "Welcome to my Echo profile! This is where I share my thoughts and connect with others." %></p>
-            </div>
-            
-            <div class="profile-meta">
-              <div class="profile-meta-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span><%= user.location || "Helsinki, Finland" %></span>
-              </div>
-              <div class="profile-meta-item">
-                <i class="fas fa-link"></i>
-                <a href="<%= user.website || 'https://example.com' %>" target="_blank"><%= user.website || "https://example.com" %></a>
-              </div>
-              <div class="profile-meta-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Joined <%= formatTime(user.createdAt) %></span>
-              </div>
-            </div>
-            
-            <div class="profile-stats">
-              <a href="/profile/<%= user.id %>/following" class="profile-stat">
-                <span class="stat-value" id="profile-following-count"><%= user._count.following %></span>
-                <span class="stat-label">Following</span>
-              </a>
-              <a href="/profile/<%= user.id %>/followers" class="profile-stat">
-                <span class="stat-value" id="profile-follower-count"><%= user._count.followers %></span>
-                <span class="stat-label">Followers</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <%- include("partials/profileHeader") %>
       
       <!-- Profile Tabs -->
       <div class="profile-tabs">
@@ -97,13 +31,13 @@
       </div>
       
       <!-- Profile Feed -->
-      <div class="feed">
+      <div class="feed" data-last-post-id="<%= lastPostId || '' %>">
         <% if (user.posts && user.posts.length > 0) { %>
           <% user.posts.forEach(post => { %>
             <article class="post">
-              <a href="/feed/post/<%= post.id %>" class="post-link"></a>
+              <a href="/posts/<%= post.id %>" class="post-link"></a>
               <div class="post-avatar">
-                <img src="/images/default.png" alt="User Avatar">
+                <img src="<%= user.image || '/images/default.png' %>" alt="User Avatar">
               </div>
               <div class="post-content">
                 <div class="post-header">
@@ -127,23 +61,24 @@
                 <div class="post-actions">
                   <button class="post-action comment">
                     <i class="far fa-comment"></i>
-                    <span><%= post.commentCount || 0 %></span>
+                    <span><%= post._count?.comments || 0 %></span>
                   </button>
                   <button class="post-action repost" data-id="<%= post.id %>">
-                    <i class="fas fa-retweet"></i>
-                    <span><%= post.repostCount || 0 %></span>
+                    <i class="<%= post.reposts && post.reposts.length > 0 ? 'reposted' : 'fas' %> fas fa-retweet"></i>
+                    <span><%= post._count?.reposts || 0 %></span>
                   </button>
                   <button class="post-action like" data-id="<%= post.id %>">
                     <i class="<%= post.likes && post.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
                     <span><%= post._count?.likes || 0 %></span>
                   </button>
-                  <button class="post-action share">
+                  <button class="post-action share" data-id="<%= post.id %>">
                     <i class="far fa-share-square"></i>
                   </button>
                 </div>
               </div>
             </article>
           <% }) %>
+          <button id="show-more-btn" class="btn btn-primary btn-show-more" data-user-id="<%= user.id %>" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Show more</button>
         <% } else { %>
           <div class="no-posts">
             <div class="no-posts-icon">
@@ -164,55 +99,14 @@
   <%- include("partials/composeModal") %>
   
   <!-- Edit Profile Modal -->
-  <div class="modal" id="edit-profile-modal">
-    <form action="/profile/<%= user.id %>" method="POST">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Edit Profile</h2>
-        <button class="close-modal">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="edit-profile-form">
-          <div class="form-group">
-            <label for="display-name">Name</label>
-            <input type="text" id="display-name" name="username" value="<%= user.username %>" maxlength="50">
-            <div class="character-counter">50</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="bio">Bio</label>
-            <textarea id="bio" name="bio" maxlength="160"><%= user.bio || "Welcome to my Echo profile! This is where I share my thoughts and connect with others." %></textarea>
-            <div class="character-counter">160</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" id="location" name="location" value="<%= user.location || 'Helsinki, Finland' %>" maxlength="30">
-            <div class="character-counter">30</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="website">Website</label>
-            <input type="url" id="website" name="website" value="<%= user.website || 'https://example.com' %>" maxlength="100">
-          </div>
-          
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  <%- include("partials/editProfileModal") %>
   
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/js/index.js"></script>
   <script type="module" src="/js/feed.js"></script>
-  <script type="module" src="/js/emoji.js"></script>
   <script type="module" src="/js/profile.js"></script>
   <script type="module" src="/js/likes.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
 </body>
 </html>
 

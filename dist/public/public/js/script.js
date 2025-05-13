@@ -1,6 +1,4 @@
-/**
- * Main script for handling common UI functionality
- */
+import { showAlert } from "./alerts.js";
 document.addEventListener("DOMContentLoaded", () => {
   initMobileNavigation();
   initTestimonialSlider();
@@ -9,9 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
   initRevealAnimations();
 });
 
-/**
- * Initializes mobile navigation toggle
- */
+// Copy to clipboard
+const emailLink = document.getElementById("email");
+
+if (emailLink) {
+  emailLink.addEventListener("click", async function (e) {
+    e.stopPropagation();
+
+    const email = emailLink.textContent;
+    navigator.clipboard.writeText(email);
+    showAlert("success", "Copied to clipboard", 2500);
+  });
+}
+
 function initMobileNavigation() {
   const navToggle = document.querySelector(".nav-toggle");
   const navMenu = document.querySelector(".nav-menu");
@@ -33,9 +41,6 @@ function initMobileNavigation() {
   });
 }
 
-/**
- * Initializes testimonial slider functionality
- */
 function initTestimonialSlider() {
   const testimonialSlider = document.querySelector(".testimonial-slider");
   const testimonials = document.querySelectorAll(".testimonial");
@@ -48,21 +53,31 @@ function initTestimonialSlider() {
   let autoSlide;
   const SLIDE_INTERVAL = 5000;
 
+  // Show first testimonial
+  testimonials[0].classList.add("active");
+
   // Function to update slider position
-  const updateSlider = () => {
-    testimonialSlider.style.transform = `translateX(-${currentIndex * 100}%)`;
+  const updateSlider = (newIndex) => {
+    // Hide current testimonial
+    testimonials[currentIndex].classList.remove("active");
+
+    // Update index
+    currentIndex = newIndex;
+
+    // Show new testimonial
+    testimonials[currentIndex].classList.add("active");
   };
 
   // Navigate to next slide
   const nextSlide = () => {
-    currentIndex = (currentIndex + 1) % testimonials.length;
-    updateSlider();
+    const newIndex = (currentIndex + 1) % testimonials.length;
+    updateSlider(newIndex);
   };
 
   // Navigate to previous slide
   const prevSlide = () => {
-    currentIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
-    updateSlider();
+    const newIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
+    updateSlider(newIndex);
   };
 
   // Setup auto slide functionality
@@ -81,15 +96,14 @@ function initTestimonialSlider() {
   // Event listeners
   nextBtn.addEventListener("click", () => {
     nextSlide();
-    startAutoSlide(); // Reset timer when manually changing
+    startAutoSlide();
   });
 
   prevBtn.addEventListener("click", () => {
     prevSlide();
-    startAutoSlide(); // Reset timer when manually changing
+    startAutoSlide();
   });
 
-  // Pause/resume auto slide on hover
   testimonialSlider.addEventListener("mouseenter", stopAutoSlide);
   testimonialSlider.addEventListener("mouseleave", startAutoSlide);
 
@@ -97,9 +111,6 @@ function initTestimonialSlider() {
   startAutoSlide();
 }
 
-/**
- * Initializes floating element animations
- */
 function initFloatingElements() {
   const floatingElements = document.querySelectorAll(".floating-element");
   if (!floatingElements.length) return;
@@ -119,7 +130,6 @@ function initFloatingElements() {
 
     // Custom animation for each element
     function animate() {
-      // Reverse direction if boundaries reached
       if (Math.abs(x) > 20) dirX *= -1;
       if (Math.abs(y) > 20) dirY *= -1;
 
@@ -135,15 +145,11 @@ function initFloatingElements() {
   });
 }
 
-/**
- * Initializes smooth scrolling for anchor links
- */
 function initSmoothScrolling() {
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
       const targetId = this.getAttribute("href");
 
-      // Skip if just "#"
       if (targetId === "#") return;
 
       const targetElement = document.querySelector(targetId);
@@ -158,21 +164,18 @@ function initSmoothScrolling() {
   });
 }
 
-/**
- * Initializes reveal animations on scroll
- */
 function initRevealAnimations() {
   const revealElements = document.querySelectorAll(".feature-card, .testimonial, .cta");
   if (!revealElements.length) return;
 
-  // Set initial styles for reveal elements
+  // Set initial styles
   revealElements.forEach((element) => {
     element.style.opacity = "0";
     element.style.transform = "translateY(20px)";
     element.style.transition = "opacity 0.6s ease, transform 0.6s ease";
   });
 
-  // Debounce function to limit how often checkReveal runs
+  // Debounce function
   const debounce = (func, delay) => {
     let timeout;
     return function () {
@@ -181,7 +184,6 @@ function initRevealAnimations() {
     };
   };
 
-  // Check if elements should be revealed
   const checkReveal = () => {
     const windowHeight = window.innerHeight;
     const revealPoint = 150;

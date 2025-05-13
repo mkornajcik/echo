@@ -1,5 +1,6 @@
 <div class="compose-modal" id="compose-modal">
   <form class="" action="/feed" method="post">
+
   <div class="compose-modal-content">
     <div class="compose-modal-header">
       <button class="close-modal">
@@ -8,21 +9,12 @@
     </div>
     <div class="compose-modal-body">
       <div class="compose-avatar">
-        <img src="/images/default.png" alt="User Avatar">
+        <img src="<%= reqUser.image || '/images/default.png' %>" alt="User Avatar">
       </div>
       <div class="compose-input-container">
         <textarea placeholder="What's happening?" maxlength="280" name="text" id="text" required></textarea>
         <div class="compose-actions">
           <div class="compose-tools">
-            <button title="Media">
-              <i class="fas fa-image"></i>
-            </button>
-            <button title="GIF">
-              <i class="fas fa-film"></i>
-            </button>
-            <button title="Poll">
-              <i class="fas fa-poll-h"></i>
-            </button>
             <button title="Emoji">
               <i class="far fa-smile"></i>
             </button>

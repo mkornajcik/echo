@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages | Echo</title>
-  <!-- CSS Files -->
   <link rel="stylesheet" href="/styles/styles.css">
   <link rel="stylesheet" href="/styles/feed.css">
   <link rel="stylesheet" href="/styles/messages.css">
@@ -14,7 +13,7 @@
   <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
 </head>
 <body>
-  <div class="feed-container">
+  <div class="feed-container messages-page">
     <!-- Left Sidebar -->
     <%- include("partials/leftSideNav") %>
     
@@ -24,247 +23,64 @@
       <aside class="messages-sidebar">
         <header class="messages-header">
           <h2>Messages</h2>
-          <button class="new-message-btn" aria-label="New message">
-            <i class="fas fa-envelope-open-text"></i>
-          </button>
         </header>
         
         <div class="messages-search">
           <i class="fas fa-search" aria-hidden="true"></i>
-          <input type="text" placeholder="Search messages" aria-label="Search messages">
+          <input type="text" id="conversation-search" placeholder="Search messages" aria-label="Search messages">
         </div>
         
-        <nav class="conversation-list" aria-label="Conversations">
-          <!-- Active conversation -->
-          <div class="conversation-item active" role="button" tabindex="0">
-            <div class="conversation-avatar">
-              <img src="/images/default.png" alt="Jane Smith">
-              <span class="online-indicator" aria-label="Online"></span>
-            </div>
-            <div class="conversation-content">
-              <div class="conversation-header">
-                <h3>Jane Smith</h3>
-                <span class="conversation-time">2m</span>
-              </div>
-              <p class="conversation-preview">Thanks for sharing that article! It was really helpful.</p>
-            </div>
-          </div>
-          
-          <!-- Unread conversation -->
-          <div class="conversation-item unread" role="button" tabindex="0">
-            <div class="conversation-avatar">
-              <img src="/images/default.png" alt="Tech Insider">
-            </div>
-            <div class="conversation-content">
-              <div class="conversation-header">
-                <h3>Tech Insider</h3>
-                <span class="conversation-time">1h</span>
-              </div>
-              <p class="conversation-preview">Would you be interested in collaborating on a project?</p>
-            </div>
-          </div>
-          
-          <!-- Regular conversations -->
-          <div class="conversation-item" role="button" tabindex="0">
-            <div class="conversation-avatar">
-              <img src="/images/default.png" alt="Alex Johnson">
-            </div>
-            <div class="conversation-content">
-              <div class="conversation-header">
-                <h3>Alex Johnson</h3>
-                <span class="conversation-time">1d</span>
-              </div>
-              <p class="conversation-preview">Great meeting you at the conference yesterday!</p>
-            </div>
-          </div>
-          
-          <div class="conversation-item" role="button" tabindex="0">
-            <div class="conversation-avatar">
-              <img src="/images/default.png" alt="Design Matters">
-            </div>
-            <div class="conversation-content">
-              <div class="conversation-header">
-                <h3>Design Matters</h3>
-                <span class="conversation-time">3d</span>
-              </div>
-              <p class="conversation-preview">I loved your latest design. The color palette is perfect!</p>
-            </div>
-          </div>
-          
-          <div class="conversation-item" role="button" tabindex="0">
-            <div class="conversation-avatar">
-              <img src="/images/default.png" alt="Web Dev Tips">
-            </div>
-            <div class="conversation-content">
-              <div class="conversation-header">
-                <h3>Web Dev Tips</h3>
-                <span class="conversation-time">1w</span>
-              </div>
-              <p class="conversation-preview">Have you tried the new framework yet?</p>
-            </div>
-          </div>
-        </nav>
+        <!-- Conversations List -->
+        <%- include('partials/conversationsPartial', { conversations, reqUser, activeConversation }) %>
       </aside>
       
       <!-- Message Content -->
-      <section class="message-content">
-        <header class="message-header">
-          <div class="message-user-info">
-            <div class="message-avatar">
-              <img src="/images/default.png" alt="Jane Smith">
-              <span class="online-indicator" aria-label="Online"></span>
-            </div>
-            <div>
-              <h3>Jane Smith</h3>
-              <p>@janesmith</p>
-            </div>
-          </div>
-          <div class="message-actions">
-            <button class="message-action-btn" aria-label="Conversation info">
-              <i class="fas fa-info-circle" aria-hidden="true"></i>
-            </button>
-          </div>
-        </header>
-        
-        <div class="message-body" aria-label="Conversation messages">
-          <div class="message-date-divider">
-            <span>Today</span>
-          </div>
-          
-          <!-- Received message -->
-          <div class="message received">
-            <div class="message-bubble">
-              <p>Hey there! How's your day going?</p>
-            </div>
-            <span class="message-time">10:15 AM</span>
-          </div>
-          
-          <!-- Sent message -->
-          <div class="message sent">
-            <div class="message-bubble">
-              <p>Hi Jane! It's going well, thanks for asking. Just working on some new designs.</p>
-            </div>
-            <span class="message-time">10:18 AM</span>
-          </div>
-          
-          <div class="message received">
-            <div class="message-bubble">
-              <p>That sounds interesting! What kind of designs are you working on?</p>
-            </div>
-            <span class="message-time">10:20 AM</span>
-          </div>
-          
-          <div class="message sent">
-            <div class="message-bubble">
-              <p>I'm redesigning a website for a client. Trying to make it more user-friendly and modern.</p>
-            </div>
-            <span class="message-time">10:25 AM</span>
-          </div>
-          
-          <div class="message received">
-            <div class="message-bubble">
-              <p>That's awesome! I actually came across this article about UX design trends that might be helpful for you.</p>
-            </div>
-            <span class="message-time">10:30 AM</span>
-          </div>
-          
-          <div class="message received">
-            <div class="message-bubble">
-              <p>Here's the link: <a href="#" class="message-link">https://example.com/ux-design-trends-2023</a></p>
-            </div>
-            <span class="message-time">10:31 AM</span>
-          </div>
-          
-          <div class="message sent">
-            <div class="message-bubble">
-              <p>Thanks for sharing that article! It was really helpful.</p>
-            </div>
-            <span class="message-time">11:45 AM</span>
-          </div>
-        </div>
-        
-        <footer class="message-composer">
-          <div class="message-input-container">
-            <textarea placeholder="Type a message..." rows="1" aria-label="Message input"></textarea>
-            <div class="message-input-actions">
-              <button title="Media" aria-label="Attach media">
-                <i class="fas fa-image" aria-hidden="true"></i>
-              </button>
-              <button title="GIF" aria-label="Attach GIF">
-                <i class="fas fa-film" aria-hidden="true"></i>
-              </button>
-              <button title="Emoji" aria-label="Add emoji">
-                <i class="far fa-smile" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-          <button class="send-message-btn" disabled aria-label="Send message">
-            <i class="fas fa-paper-plane" aria-hidden="true"></i>
-          </button>
-        </footer>
-      </section>
+      <%- include('partials/messagePartial', { activeConversation, reqUser }) %>
     </main>
     
     <!-- Right Sidebar -->
     <%- include("partials/rightSideNav") %>
+
+    <!-- Compose  -->
+    <%- include("partials/composeModal") %>
   </div>
 
-  <!-- New Message Modal -->
-  <div id="new-message-modal" class="modal">
+  
+
+  <!-- Conversation Info Modal -->
+  <div id="conversation-info-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>New Message</h2>
-        <button class="close-modal">&times;</button>
+        <h2>Conversation Info</h2>
+        <button class="close-modal" aria-label="Close modal">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="search-users">
-          <label>To:</label>
-          <input type="text" placeholder="Search people">
-        </div>
-        <div class="suggested-users">
-          <h4>Suggested</h4>
-          <div class="user-list">
-            <div class="user-item">
-              <div class="user-avatar">
-                <img src="/images/default.png" alt="User Avatar">
-              </div>
-              <div class="user-info">
-                <h4>Sarah Thompson</h4>
-                <p>@sarathompson</p>
-              </div>
-            </div>
-            <div class="user-item">
-              <div class="user-avatar">
-                <img src="/images/default.png" alt="User Avatar">
-              </div>
-              <div class="user-info">
-                <h4>David Chen</h4>
-                <p>@davidchen</p>
-              </div>
-            </div>
-            <div class="user-item">
-              <div class="user-avatar">
-                <img src="/images/default.png" alt="User Avatar">
-              </div>
-              <div class="user-info">
-                <h4>Michael Rodriguez</h4>
-                <p>@michaelrodriguez</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-primary" disabled>Next</button>
-        </div>
+      <div class="modal-body" id="conversation-info-content">
       </div>
     </div>
   </div>
 
+  <!-- Image Upload Input-->
+  <input type="file" id="message-image-upload" accept="image/*" hidden>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script
+    src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+    integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
+    crossorigin="anonymous"
+  ></script>
+
+
+  <script nonce="<%= nonce %>">
+    window.CURRENT_USER = <%- JSON.stringify(reqUser) %>;
+    window.ACTIVE_CONVERSATION = <%- JSON.stringify(activeConversation) %>;
+  </script>
+
   <script type="module" src="/js/alerts.js"></script>
   <script type="module" src="/js/emoji.js"></script>
+  <script type="module" src="/js/feed.js"></script>
   <script type="module" src="/js/messages.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
 </body>
 </html>
-

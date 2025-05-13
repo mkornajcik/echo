@@ -1,0 +1,28 @@
+<form class="compose-post" id="compose-form" enctype="multipart/form-data">
+  <div class="compose-avatar">
+    <img src="<%= reqUser.image || '/images/default.png' %>" alt="User Avatar">
+  </div>
+  <div class="compose-input-container">
+    <textarea placeholder="What's happening?" maxlength="280" name="text" id="text"></textarea>
+    
+    <!-- Image Preview Container -->
+    <div class="image-preview-container" id="image-preview"></div>
+    
+    <div class="compose-actions">
+      <div class="compose-tools">
+        <!-- Image Upload Input -->
+        <input type="file" id="image-upload" accept="image/*" hidden>
+        <button type="button" title="Add image" id="media-button" aria-label="Add image">
+          <i class="fas fa-image"></i>
+        </button>
+        <button type="button" title="Emoji" aria-label="Add emoji">
+          <i class="far fa-smile"></i>
+        </button>
+      </div>
+      <div class="compose-submit">
+        <span class="character-count">280</span>
+        <button class="btn btn-primary post-btn" type="submit" disabled>Post</button>
+      </div>
+    </div>
+  </div>
+</form>

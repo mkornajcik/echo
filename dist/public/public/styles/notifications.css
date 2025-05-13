@@ -1,15 +1,17 @@
-/* Notifications Page Styles */
-
 /* Notification Tabs */
 .notification-tabs {
   display: flex;
   border-bottom: 1px solid var(--color-border);
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
 
 .notification-tabs::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
+  display: none;
+}
+
+.btn-mark-as-read {
+  margin-top: 0.5rem;
 }
 
 .notification-tab {
@@ -91,13 +93,18 @@
 }
 
 .notification-icon.mention {
-  background-color: rgba(29, 155, 240, 0.1);
-  color: #1d9bf0;
+  background-color: #f08e1d1a;
+  color: #f08e1d;
 }
 
 .notification-icon.comment {
-  background-color: rgba(29, 155, 240, 0.1);
+  background-color: #1d9bf01a;
   color: #1d9bf0;
+}
+
+.notification-icon.message {
+  background-color: rgba(119, 2, 57, 0.1);
+  color: #f01d1d;
 }
 
 .notification-content {
@@ -157,6 +164,7 @@
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-wrap: break-word;
 }
 
 .notification-action {
@@ -250,6 +258,21 @@
 
   .notification-tab {
     padding: 1rem 0.75rem;
+  }
+
+  .notifications-list {
+    max-width: calc(100vh - 300px);
+    min-width: 200px;
+  }
+
+  .notification-item {
+    max-width: calc(100vh - 300px);
+    min-width: 200px;
+  }
+
+  .notification-content {
+    max-width: calc(100vh - 300px);
+    min-width: auto;
   }
 }
 

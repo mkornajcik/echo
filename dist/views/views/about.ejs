@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Echo</title>
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/about.css">
+
+</head>
+<body>
+
+<div class="container about-container">
+  <%- include('partials/header') %>
+  <!-- Hero Section -->
+  <section class="about-hero">
+    <div class="about-hero-content">
+      <h1>About Our Platform</h1>
+      <p class="about-subtitle">Connecting people through meaningful conversations</p>
+    </div>
+  </section>
+
+  <!-- Mission Statement -->
+  <section class="about-section">
+    <div class="about-section-inner">
+      <h2>Our Mission</h2>
+      <div class="mission-content">
+        <div class="mission-text">
+          <p>Our mission is to create a space where people can freely express themselves, share ideas, and connect with others in a safe and inclusive environment. We believe in the power of communication to bridge divides and foster understanding.</p>
+          <p>We're committed to building a platform that prioritizes user experience, privacy, and meaningful interactions over algorithms and engagement metrics.</p>
+        </div>
+        <div class="mission-image">
+          <div class="image-placeholder"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Description -->
+  <section class="about-section alt-bg">
+    <div class="about-section-inner">
+      <h2>What We Offer</h2>
+      <p class="section-intro">Our platform is designed to give you the best social experience with tools that help you connect, share, and discover.</p>
+      
+      <div class="product-description">
+        <p>Born from the idea that social media should bring people together rather than divide them, our platform focuses on genuine connections and meaningful content. We've built a space where quality conversations take precedence over viral content, where your data remains yours, and where community guidelines are enforced fairly and transparently.</p>
+        <p>Whether you're looking to stay in touch with friends, follow topics you're passionate about, or discover new perspectives, our platform provides the tools you need without the noise and distractions common on other networks.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="about-section">
+    <div class="about-section-inner">
+      <h2>Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h3>Real-time Messaging</h3>
+          <p>Connect instantly with friends and followers through our seamless messaging system.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <h3>Community Building</h3>
+          <p>Create and join communities around shared interests and passions.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>Privacy Controls</h3>
+          <p>Robust privacy settings that give you complete control over your data and who sees your content.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <h3>Smart Notifications</h3>
+          <p>Stay updated with relevant notifications without being overwhelmed.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>Advanced Search</h3>
+          <p>Find exactly what you're looking for with our powerful search functionality.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>Mobile Friendly</h3>
+          <p>Enjoy the full experience on any device with our responsive design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="about-cta">
+    <div class="about-section-inner">
+      <h2>Join Our Community Today</h2>
+      <p>Experience a better way to connect and share with people who matter.</p>
+      <div class="cta-buttons">
+        <a href="/register" class="btn btn-primary">Sign Up Now</a>
+        <a href="/login" class="btn btn-secondary">Log In</a>
+      </div>
+    </div>
+  </section>
+  <%- include('partials/footer') %>
+</div>
+
+
+
+
+<script src="/js/terms.js"></script>
+
+</body>
+</html>

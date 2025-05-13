@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-module.exports = (req, res, next) => {
+const formatTime = (req, res, next) => {
     res.locals.formatTime = (createdAt) => {
         const now = new Date();
         const diffMs = now.getTime() - createdAt.getTime();
@@ -24,3 +24,4 @@ module.exports = (req, res, next) => {
     };
     next();
 };
+exports.default = formatTime;

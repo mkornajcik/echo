@@ -1,44 +1,51 @@
 <article class="post">
-          <a href="/posts/<%= post.id %>" class="post-link"></a>
-          <div class="post-avatar">
-            <img src="/images/default.png" alt="User Avatar">
-          </div>
-          <div class="post-content">
-            <div class="post-header">
-              <div class="post-user-info">
-                <h3><a href="/profile/<%= post.user.id %>"><%= post.user.username %></a></h3>
-                <span class="username">@<%= post.user.usertag %></span>
-                <span class="post-time">· <%= formatTime(post.createdAt) %></span>
-              </div>
-              <button class="post-menu">
-                <i class="fas fa-ellipsis-h"></i>
-              </button>
-            </div>
-            <div class="post-text">
-              <p><%= post.text %></p>
-            </div>
-            <% if (post.image) { %>
-            <div class="post-image">
-              <img src="<%= post.image %>" alt="Post image">
-            </div>
-            <% } %>
-            <div class="post-actions">
-              <button class="post-action comment">
-                <i class="far fa-comment"></i>
-                <span><%= post.comments ? post.comments.length : 0 %></span>
-              </button>
-              <button class="post-action repost" data-id="<%= post.id %>">
-                <i class="fas fa-retweet"></i>
-                <span><%= post._count?.reposts || 0 %></span>
-              </button>
-              <button class="post-action like" data-id="<%= post.id %>">
-                <i class="<%= post.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
-                <span><%= post._count?.likes || 0 %></span>
-              </button>
-              <button class="post-action share">
-                <i class="far fa-share-square"></i>
-              </button>
-            </div>
-          </div>
-        </article>
-        
+  <a href="/posts/<%= post.id %>" class="post-link"></a>
+  <div class="post-avatar">
+    <a href="/profile/<%= post.user.id %>">
+      <img src="<%= post.user.image || '/images/default.png' %>" alt="<%= post.user.username %>'s Avatar">
+    </a>
+  </div>
+  <div class="post-content">
+    <div class="post-header">
+      <div class="post-user-info">
+        <h3><a href="/profile/<%= post.user.id %>"><%= post.user.username %></a></h3>
+        <span class="username">@<%= post.user.usertag %></span>
+        <span class="post-time">· <%= formatTime(post.createdAt) %></span>
+      </div>
+    </div>
+    <div class="post-text">
+      <p><%= post.text %></p>
+    </div>
+    <% if (post.image) { %>
+    <div class="post-image-container">
+      <div class="post-image">
+        <img 
+          src="/images/placeholder.svg" 
+          data-src="<%= post.image %>" 
+          alt="<%= post.text ? 'Image: ' + post.text.substring(0, 30) + (post.text.length > 30 ? '...' : '') : 'Post image' %>"
+          class="lazy-image"
+          loading="lazy"
+        >
+        <div class="lazy-placeholder"></div>
+      </div>
+    </div>
+    <% } %>
+    <div class="post-actions">
+      <button class="post-action comment" data-id="<%= post.id %>" id="comment-btn">
+        <i class="far fa-comment"></i>
+        <span><%= post._count?.comments || 0 %></span>
+      </button>
+      <button class="post-action repost" data-id="<%= post.id %>">
+        <i class="<%= post.reposts && post.reposts.length > 0 ? 'reposted' : 'fas' %> fas fa-retweet"></i>
+        <span><%= post._count?.reposts || 0 %></span>
+      </button>
+      <button class="post-action like" data-id="<%= post.id %>" >
+        <i class="<%= post.likes && post.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
+        <span><%= post._count?.likes || 0 %></span>
+      </button>
+      <button class="post-action share" data-id="<%= post.id %>" id="share-btn">
+        <i class="far fa-share-square"></i>
+      </button>
+    </div>
+  </div>
+</article>

@@ -21,6 +21,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -29,6 +30,8 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   overflow-x: hidden;
+  overflow-y: scroll;
+  margin-right: -1px;
 }
 
 a {
@@ -114,6 +117,11 @@ p {
   background-color: transparent;
   color: var(--color-text);
   border: 2px solid var(--color-primary);
+}
+
+.btn-view {
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
 }
 
 .btn-secondary:hover {
@@ -339,16 +347,22 @@ nav {
 .testimonial-slider {
   display: flex;
   overflow: hidden;
-  margin: 2rem 0;
+  width: 100%;
+  transition: transform 0.5s ease;
+  position: relative;
 }
 
 .testimonial {
-  min-width: 100%;
+  flex: 0 0 100%;
+  width: 100%;
   padding: 2rem;
   background-color: var(--color-card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
-  transition: transform 0.5s ease;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
 .testimonial p {
@@ -361,6 +375,12 @@ nav {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.testimonial.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
 }
 
 .avatar {
@@ -602,4 +622,17 @@ footer {
   .feature-cards {
     grid-template-columns: 1fr;
   }
+}
+
+body::-webkit-scrollbar {
+  width: 6px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 6px;
 }

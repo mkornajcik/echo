@@ -23,11 +23,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isLoggedIn = exports.protect = exports.logout = exports.login = exports.register = void 0;
 const prismaClient_1 = __importDefault(require("../prismaClient"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const catchAsync = require("../utils/catchAsync");
+const catchAsync_1 = require("../utils/catchAsync");
 const signToken = (id) => {
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET not defined.");
@@ -50,10 +51,21 @@ const createToken = (user, statusCode, res) => {
         cookieOptions.secure = true;
     res.cookie("jwt", token, cookieOptions);
     const { password } = user, userWithoutPassword = __rest(user, ["password"]);
-    res.status(statusCode).json({ status: "success", token, data: { user: userWithoutPassword } });
+    res.status(statusCode).json({ status: "success" });
 };
-exports.register = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.register = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 12);
+    const existingUser = yield prismaClient_1.default.user.findFirst({
+        where: {
+            OR: [{ email: req.body.email }, { username: req.body.username }, { usertag: req.body.usertag }],
+        },
+    });
+    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.email) === req.body.email)
+        return next(new appError_1.default("Email already in use", 400, true));
+    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.username) === req.body.username)
+        return next(new appError_1.default("Username already in use", 400, true));
+    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.usertag) === req.body.usertag)
+        return next(new appError_1.default("Usertag already in use", 400, true));
     const newUser = yield prismaClient_1.default.user.create({
         data: {
             email: req.body.email,
@@ -64,7 +76,7 @@ exports.register = catchAsync((req, res, next) => __awaiter(void 0, void 0, void
     });
     createToken(newUser, 201, res);
 }));
-exports.login = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.login = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     if (!username || !password) {
         return next(new appError_1.default("Provide valid username and password", 400, true));
@@ -81,14 +93,15 @@ exports.login = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0,
     }
     createToken(user, 200, res);
 }));
-exports.logout = (req, res) => {
+const logout = (req, res) => {
     res.cookie("jwt", "none", {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true,
     });
     res.status(200).json({ status: "success" });
 };
-exports.protect = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.logout = logout;
+exports.protect = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
@@ -109,11 +122,17 @@ exports.protect = catchAsync((req, res, next) => __awaiter(void 0, void 0, void 
     if (!currentUser) {
         return next(new appError_1.default("The user belonging to this token no longer exists.", 401, true));
     }
+    if (currentUser.passwordChangedAt && decoded.iat) {
+        const changedTimestamp = Math.floor(currentUser.passwordChangedAt.getTime() / 1000);
+        if (changedTimestamp > decoded.iat) {
+            return next(new appError_1.default("Password changed recently. Log in again.", 401, true));
+        }
+    }
     req.user = currentUser;
     res.locals.user = currentUser;
     next();
 }));
-exports.isLoggedIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const isLoggedIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.locals.user = null;
     if (req.cookies.jwt) {
         try {
@@ -142,3 +161,4 @@ exports.isLoggedIn = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
     next();
 });
+exports.isLoggedIn = isLoggedIn;

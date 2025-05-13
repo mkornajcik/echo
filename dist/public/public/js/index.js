@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (logOutBtn) {
-    console.log("Got Log out button");
     logOutBtn.addEventListener("click", logout);
   }
 

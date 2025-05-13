@@ -1,0 +1,60 @@
+<div class="conversation-list" id="conversation-list" aria-label="Conversations">
+  <% if (conversations && conversations.length > 0) { %>
+    <% conversations.forEach(conversation => { %>
+      <% 
+        const otherUser = conversation.participants.find(p => p.userId !== reqUser.id);
+        const lastMessage = conversation.messages && conversation.messages.length > 0 
+          ? conversation.messages[conversation.messages.length - 1] 
+          : null;
+        const isUnread = lastMessage && !lastMessage.readAt && lastMessage.senderId !== reqUser.id;
+        const isActive = activeConversation && activeConversation.id === conversation.id;
+      %>
+      <div class="conversation-item <%= isActive ? 'active' : '' %> <%= isUnread ? 'unread' : '' %>" 
+           role="button" 
+           tabindex="0"
+           data-conversation-id="<%= conversation.id %>"
+           data-participant-id="<%= otherUser.userId %>">
+        <div class="conversation-avatar">
+          <img src="<%= otherUser.user.image || '/images/default.png' %>" alt="<%= otherUser.user.username %>'s avatar">
+          <% if (otherUser.isOnline) { %>
+            <span class="online-indicator" aria-label="Online"></span>
+          <% } %>
+        </div>
+        <div class="conversation-content">
+          <div class="conversation-header">
+            <h3><%= otherUser.user.username %></h3>
+            <span class="conversation-time">
+              <%= lastMessage ? formatTime(lastMessage.createdAt) : 'New' %>
+            </span>
+          </div>
+          <p class="conversation-preview">
+            <% if (lastMessage) { %>
+              <% if (lastMessage.senderId === reqUser.id) { %>
+                <span class="you-prefix">You: </span>
+              <% } %>
+
+              <% if (lastMessage.content === null && lastMessage.image) { %>
+                Image
+              <% } else { %>
+                <%= lastMessage.content.length > 30 ? lastMessage.content.substring(0, 30) + '...' : lastMessage.content %>
+              <% } %>
+              
+            <% } else { %>
+              Start a conversation
+            <% } %>
+          </p>
+        </div>
+        <% if (isUnread) { %>
+          <div class="unread-indicator" aria-label="Unread messages"></div>
+        <% } %>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="no-conversations">
+      <div class="no-content-icon">
+        <i class="far fa-comments"></i>
+      </div>
+      <p>No conversations yet</p>
+    </div>
+  <% } %>
+</div>

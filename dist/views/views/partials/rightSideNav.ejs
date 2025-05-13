@@ -11,90 +11,79 @@
   
   <!-- Profile Suggestions -->
   <div class="sidebar-card">
-    <h3>Similar profiles</h3>
+    <h3>Suggested profiles</h3>
     <ul class="follow-list">
+      <% if (suggestedUsers && suggestedUsers.length > 0) { %>
+        <% suggestedUsers.forEach(user => { %>
       <li class="follow-item">
         <div class="follow-avatar">
-          <img src="/images/default.png" alt="User Avatar">
+          <img src="<%= user.image || '/images/default.png' %>" alt="<%= user.username %> Avatar">
         </div>
-        <div class="follow-info">
+        <div class="suggest-follow-info">
           <div class="follow-name">
-            <h4>Tech Insider</h4>
-            <span class="verified-badge">
-              <i class="fas fa-check-circle"></i>
-            </span>
+            <h4><%= user.username %></h4>
           </div>
-          <span class="follow-username">@techinsider</span>
+          <span class="follow-username">@<%= user.usertag %></span>
         </div>
-        <button class="btn btn-secondary follow-btn">Follow</button>
+          <a href="/profile/<%= user.id %>"><button class="btn btn-secondary btn-view">View</button></a>
       </li>
-      <li class="follow-item">
-        <div class="follow-avatar">
-          <img src="/images/default.png" alt="User Avatar">
-        </div>
-        <div class="follow-info">
-          <div class="follow-name">
-            <h4>Design Matters</h4>
-          </div>
-          <span class="follow-username">@designmatters</span>
-        </div>
-        <button class="btn btn-secondary follow-btn">Follow</button>
-      </li>
-      <li class="follow-item">
-        <div class="follow-avatar">
-          <img src="/images/default.png" alt="User Avatar">
-        </div>
-        <div class="follow-info">
-          <div class="follow-name">
-            <h4>Web Dev Tips</h4>
-          </div>
-          <span class="follow-username">@webdevtips</span>
-        </div>
-        <button class="btn btn-secondary follow-btn">Follow</button>
-      </li>
+        <% }) %>
+      <% } %>
     </ul>
-    <a href="/connect" class="show-more">Show more</a>
+    <a href="/search" class="show-more">Find more</a>
+  </div>
+
+<!-- Latest Posts From Following -->
+<div class="sidebar-card latest-posts">
+  <div class="latest-posts-header">
+    <h3>Latest From Following</h3>
   </div>
   
-  <!-- Trending Topics -->
-  <div class="sidebar-card trending">
-    <h3>Trending for you</h3>
-    <ul class="trending-list">
-      <li class="trending-item">
-        <div class="trending-header">
-          <span class="trending-category">Technology · Trending</span>
-          <button class="trending-menu">
-            <i class="fas fa-ellipsis-h"></i>
-          </button>
+  <% if (latestFromUser && latestFromUser.length > 0) { %>
+    <div class="latest-users">
+      <% latestFromUser.forEach(user => { %>
+        <div class="latest-user" data-post-id="<%= user.postId %>">
+          <div class="post-user-info">
+            <h4><a href="/profile/<%= user.id %>"><%= user.username %></a></h4>
+            <span class="username">@<%= user.usertag %></span>
+          </div>
+          <div class="post-content">
+            <%= user.postText %>
+          </div>
+          <% if (user.postText.length > 100) { %>
+            <a href="/posts/<%= user.postId %>" class="read-more">Read more</a>
+          <% } %>
+          <span class="post-timestamp" data-timestamp="<%= user.postCreatedAt %>">
+            <%= user.postCreatedAt ? new Date(user.postCreatedAt).toLocaleString() : 'Just now' %>
+          </span>
+          <div class="post-actions">
+            <button class="post-action-btn comment-btn" data-post-id="<%= user.postId %>">
+              <i class="far fa-comment"></i> <span>Reply</span>
+            </button>
+            <a href="/posts/<%= user.postId %>" class="post-action-btn">
+              <i class="fas fa-external-link-alt"></i> <span>View</span>
+            </a>
+          </div>
         </div>
-        <div class="trending-topic">#MachineLearning</div>
-        <div class="trending-stats">15.2K posts</div>
-      </li>
-      <li class="trending-item">
-        <div class="trending-header">
-          <span class="trending-category">Business · Trending</span>
-          <button class="trending-menu">
-            <i class="fas fa-ellipsis-h"></i>
-          </button>
-        </div>
-        <div class="trending-topic">#StartupLife</div>
-        <div class="trending-stats">8.7K posts</div>
-      </li>
-    </ul>
-    <a href="/explore" class="show-more">Show more</a>
-  </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-latest">
+      <p>Follow users to see their latest posts here</p>
+      <a href="/search" class="btn btn-secondary">Find users to follow</a>
+    </div>
+  <% } %>
+</div>
   
   <!-- Footer -->
   <div class="sidebar-footer">
     <nav class="footer-links">
       <a href="/terms">Terms of Service</a>
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/cookies">Cookie Policy</a>
-      <a href="/accessibility">Accessibility</a>
-      <a href="/ads">Ads Info</a>
-      <a href="/more">More...</a>
+      <a href="/terms#privacy">Privacy Policy</a>
+      <a href="/terms#cookies">Cookie Policy</a>
     </nav>
     <p class="copyright">&copy; <%= new Date().getFullYear() %> Echo</p>
   </div>
 </aside>
 
+<script type="module" src="/js/sidebarLatest.js"></script>
