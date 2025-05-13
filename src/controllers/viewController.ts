@@ -1271,15 +1271,17 @@ export const getRegisterForm = (req: Request, res: Response) => {
 };
 
 // About page
-export const getAbout = (req: Request, res: Response) => {
+export const getAbout = (req: CustomRequest, res: Response) => {
   res.status(200).render("about", {
     title: "About Us",
+    user: req.user,
   });
 };
 
 // Terms page
-export const getTerms = (req: Request, res: Response) => {
+export const getTerms = (req: CustomRequest, res: Response) => {
   res.status(200).render("terms", {
     title: "Terms, Privacy, and Cookies",
+    user: req.user,
   });
 };

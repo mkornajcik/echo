@@ -1077,12 +1077,14 @@ exports.getRegisterForm = getRegisterForm;
 const getAbout = (req, res) => {
     res.status(200).render("about", {
         title: "About Us",
+        user: req.user,
     });
 };
 exports.getAbout = getAbout;
 const getTerms = (req, res) => {
     res.status(200).render("terms", {
         title: "Terms, Privacy, and Cookies",
+        user: req.user,
     });
 };
 exports.getTerms = getTerms;
