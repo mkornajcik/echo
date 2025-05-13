@@ -19,9 +19,8 @@ RUN npx prisma generate
 # Copy the rest of the code
 COPY . .
 
-# Build the TypeScript code and SASS
+# Build the TypeScript
 RUN npm run build
-RUN npm run build:sass
 
 # Create necessary directories
 RUN mkdir -p dist/public/styles dist/public/images dist/views dist/views/partials
