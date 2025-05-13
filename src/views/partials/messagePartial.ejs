@@ -1,0 +1,112 @@
+<section class="message-content" id="message-content">
+  <% if (activeConversation) { %>
+    <% const otherUser = activeConversation.participants.find(p => p.userId !== reqUser.id); %>
+    <header class="message-header">
+      <div class="message-user-info" data-user-id="<%= otherUser.user.id %>">
+        <div class="back-button mobile-only">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        </div>
+        <div class="message-avatar">
+          <img src="<%= otherUser.user.image || '/images/default.png' %>" alt="<%= otherUser.user.username %>'s avatar">
+          <% if (otherUser.isOnline) { %>
+            <span class="online-indicator" aria-label="Online"></span>
+          <% } %>
+        </div>
+        <div>
+          <h3><%= otherUser.user.username %></h3>
+          <p>@<%= otherUser.user.usertag %></p>
+        </div>
+      </div>
+      <div class="message-actions">
+        <a href="/profile/<%= otherUser.userId %>" class="message-action-btn" aria-label="View profile">
+          <i class="fas fa-user" aria-hidden="true"></i>
+        </a>
+        <button class="message-action-btn" aria-label="Conversation info" id="conversation-info-btn">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+    
+    <div class="message-body" id="message-body" aria-label="Conversation messages">
+      <% 
+        // Group messages by date
+        const messagesByDate = {};
+        activeConversation.messages.forEach(message => {
+          const date = new Date(message.createdAt).toLocaleDateString();
+          if (!messagesByDate[date]) {
+            messagesByDate[date] = [];
+          }
+          messagesByDate[date].push(message);
+        });
+        
+        // Get today and yesterday dates for special labels
+        const today = new Date().toLocaleDateString();
+        const yesterday = new Date(Date.now() - 86400000).toLocaleDateString();
+      %>
+      
+      <% Object.keys(messagesByDate).forEach(date => { %>
+        <div class="message-date-divider">
+          <span>
+            <% if (date === today) { %>
+              Today
+            <% } else if (date === yesterday) { %>
+              Yesterday
+            <% } else { %>
+              <%= date %>
+            <% } %>
+          </span>
+        </div>
+        
+        <% messagesByDate[date].forEach(message => { %>
+          <div class="message <%= message.senderId === reqUser.id ? 'sent' : 'received' %>" 
+               data-message-id="<%= message.id %>">
+            <div class="message-bubble">
+              <p><%= message.content %></p>
+              <% if (message.image) { %>
+                <img
+                  src="<%= message.image %>"
+                  class="message-image"
+                  alt="Message image"
+                >
+              <% } %>
+            </div>
+            <span class="message-time">
+              <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+              <% if (message.senderId === reqUser.id) { %>
+                <i class="<%= message.readAt ? 'fas fa-check-double' : 'fas fa-check' %> message-status"></i>
+              <% } %>
+            </span>
+          </div>
+        <% }) %>
+      <% }) %>
+    </div>
+    
+    <form class="message-composer" id="message-form">
+      <div class="message-input-container">
+        <textarea id="message-input" placeholder="Type a message..." rows="1" aria-label="Message input"></textarea>
+        <div class="message-input-actions">
+          <button type="button" title="Media" aria-label="Attach media" id="attach-media-btn">
+            <i class="fas fa-image" aria-hidden="true"></i>
+          </button>
+          <button type="button" title="GIF" aria-label="Attach GIF" id="attach-gif-btn">
+            <i class="fas fa-film" aria-hidden="true"></i>
+          </button>
+          <button type="button" title="Emoji" aria-label="Add emoji" id="emoji-btn">
+            <i class="far fa-smile" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="send-message-btn" aria-label="Send message" id="send-message-btn">
+        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+      </button>
+    </form>
+  <% } else { %>
+    <div class="empty-conversation">
+      <div class="empty-icon">
+        <i class="far fa-comments"></i>
+      </div>
+      <h3>Your Messages</h3>
+      <p>Send private messages to other users</p>
+    </div>
+  <% } %>
+</section>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= user.username %>'s Profile | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/profile.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Profile Header -->
+      <%- include("partials/profileHeader") %>
+      
+      <!-- Profile Tabs -->
+      <div class="profile-tabs">
+        <a class="profile-tab" href="/profile/<%= user.id %>">Posts</a>
+        <a class="profile-tab active" href="/profile/<%= user.id %>/comments">Replies</a>
+        <a class="profile-tab" href="/profile/<%= user.id %>/reposts">Reposts</a>
+        <a class="profile-tab" href="/profile/<%= user.id %>/likes">Likes</a>
+      </div>
+      
+      <!-- Profile Feed -->
+      <div class="feed" data-last-post-id="<%= lastPostId || '' %>">
+        <% if (user.comments && user.comments.length > 0) { %>
+          <% user.comments.forEach(comment => { %>
+            <article class="post">
+              <a href="/posts/<%= comment.postId %>" class="post-link"></a>
+              <div class="post-avatar">
+                <img src="<%= user.image || '/images/default.png' %>" alt="User Avatar">
+              </div>
+              <div class="post-content">
+                <div class="post-header">
+                  <div class="post-user-info">
+                    <h3><%= user.username %></h3>
+                    <span class="username">@<%= user.usertag %></span>
+                    <span class="post-time">· <%= formatTime(comment.createdAt) %></span>
+                    <span class="replying-to">- Replying to <%= comment.post.user.username %></span>
+                  </div>
+                  <button class="post-menu">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+                <div class="post-text">
+                  <p><%= comment.text %></p>
+                </div>
+                <% if (comment.image) { %>
+                <div class="post-image">
+                  <img src="<%= comment.image %>" alt="Post image">
+                </div>
+                <% } %>
+                <div class="post-actions">
+                  <button class="comment-action like" data-comment-id="<%= comment.id %>" data-post-id="<%= comment.post.id %>">
+                    <i class="<%= comment.likes && comment.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
+                    <span><%= comment._count?.likes || 0 %></span>
+                  </button>
+                  <button class="post-action share" data-id="<%= comment.post.id %>">
+                    <i class="far fa-share-square"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+          <button id="show-more-btn" class="btn btn-primary btn-show-more" data-user-id="<%= user.id %>" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Show more</button>
+        <% } else { %>
+          <div class="no-posts">
+            <div class="no-posts-icon">
+              <i class="far fa-comment-dots"></i>
+            </div>
+            <h3>No comments yet</h3>
+            <p>When you comment on a post, it will show up here.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+  
+  <!-- Edit Profile Modal -->
+  <%- include("partials/editProfileModal") %>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/profile.js"></script>
+  <script type="module" src="/js/likes.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
+</body>
+</html>
+

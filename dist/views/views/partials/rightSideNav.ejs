@@ -1,0 +1,100 @@
+<aside class="sidebar right-sidebar">
+  <!-- Search Bar -->
+  <div class="search-container">
+    <form action="/search" method="GET" class="search-form">
+      <div class="search-input">
+        <i class="fas fa-search"></i>
+        <input type="text" name="q" placeholder="Search Echo">
+      </div>
+    </form>
+  </div>
+  
+  <!-- Profile Suggestions -->
+  <div class="sidebar-card">
+    <h3>Similar profiles</h3>
+    <ul class="follow-list">
+      <li class="follow-item">
+        <div class="follow-avatar">
+          <img src="/images/default.png" alt="User Avatar">
+        </div>
+        <div class="follow-info">
+          <div class="follow-name">
+            <h4>Tech Insider</h4>
+            <span class="verified-badge">
+              <i class="fas fa-check-circle"></i>
+            </span>
+          </div>
+          <span class="follow-username">@techinsider</span>
+        </div>
+        <button class="btn btn-secondary follow-btn">Follow</button>
+      </li>
+      <li class="follow-item">
+        <div class="follow-avatar">
+          <img src="/images/default.png" alt="User Avatar">
+        </div>
+        <div class="follow-info">
+          <div class="follow-name">
+            <h4>Design Matters</h4>
+          </div>
+          <span class="follow-username">@designmatters</span>
+        </div>
+        <button class="btn btn-secondary follow-btn">Follow</button>
+      </li>
+      <li class="follow-item">
+        <div class="follow-avatar">
+          <img src="/images/default.png" alt="User Avatar">
+        </div>
+        <div class="follow-info">
+          <div class="follow-name">
+            <h4>Web Dev Tips</h4>
+          </div>
+          <span class="follow-username">@webdevtips</span>
+        </div>
+        <button class="btn btn-secondary follow-btn">Follow</button>
+      </li>
+    </ul>
+    <a href="/connect" class="show-more">Show more</a>
+  </div>
+  
+  <!-- Trending Topics -->
+  <div class="sidebar-card trending">
+    <h3>Trending for you</h3>
+    <ul class="trending-list">
+      <li class="trending-item">
+        <div class="trending-header">
+          <span class="trending-category">Technology · Trending</span>
+          <button class="trending-menu">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+        <div class="trending-topic">#MachineLearning</div>
+        <div class="trending-stats">15.2K posts</div>
+      </li>
+      <li class="trending-item">
+        <div class="trending-header">
+          <span class="trending-category">Business · Trending</span>
+          <button class="trending-menu">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+        <div class="trending-topic">#StartupLife</div>
+        <div class="trending-stats">8.7K posts</div>
+      </li>
+    </ul>
+    <a href="/explore" class="show-more">Show more</a>
+  </div>
+  
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <nav class="footer-links">
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/cookies">Cookie Policy</a>
+      <a href="/accessibility">Accessibility</a>
+      <a href="/ads">Ads Info</a>
+      <a href="/more">More...</a>
+    </nav>
+    <p class="copyright">&copy; <%= new Date().getFullYear() %> Echo</p>
+  </div>
+</aside>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echo | Feed</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <h2>Home</h2>
+        <div class="feed-tabs">
+          <button class="feed-tab active">For You</button>
+          <button class="feed-tab">Following</button>
+        </div>
+      </header>
+      
+      <!-- Compose Post -->
+      <form class="compose-post" action="/feed" method="post">
+        <div class="compose-avatar">
+          <img src="/images/default.png" alt="User Avatar">
+        </div>
+        <div class="compose-input-container">
+          <textarea placeholder="What's happening?" maxlength="280" name="text" id="text" required></textarea>
+          <div class="compose-actions">
+            <div class="compose-tools">
+              <button title="Media">
+                <i class="fas fa-image"></i>
+              </button>
+              <button title="GIF">
+                <i class="fas fa-film"></i>
+              </button>
+              <button title="Poll">
+                <i class="fas fa-poll-h"></i>
+              </button>
+              <button title="Emoji">
+                <i class="far fa-smile"></i>
+              </button>
+            </div>
+            <div class="compose-submit">
+              <span class="character-count">280</span>
+              <button class="btn btn-primary post-btn" type="submit" disabled >Post</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      
+      <!-- Feed -->
+      <div class="feed" id="posts-container" data-last-post-id="<%= lastPostId %>">
+        <!-- Posts -->
+        <% posts.forEach(post => { %>
+          <%- include('partials/postPartial', { post: post, reqUser: reqUser, formatTime: formatTime }) %>
+        <% }) %>
+      </div>
+      
+      <div id="loading-indicator" style="display: none; text-align: center; padding: 20px; z-index: 1000;">
+        <p>Loading more posts...</p>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/emoji.js"></script>
+  <script type="module" src="/js/likes.js"></script>
+</body>
+
+</html>
+

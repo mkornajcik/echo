@@ -1,0 +1,41 @@
+<div class="modal" id="edit-profile-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Profile</h2>
+      <button class="close-modal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-profile-form">
+        <div class="form-group">
+          <label for="display-name">Name</label>
+          <input type="text" id="display-name" name="username" value="<%= user.username %>" maxlength="50">
+          <div class="character-counter">50</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" maxlength="160"><%= user.bio || "Welcome to my Echo profile!" %></textarea>
+          <div class="character-counter">160</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" value="<%= user.location || 'Somewhere' %>" maxlength="30">
+          <div class="character-counter">30</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="website">Website</label>
+          <input type="url" id="website" name="website" value="<%= user.website || 'https://example.com' %>" maxlength="100">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+          <button class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

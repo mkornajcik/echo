@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/notifications.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <h2>Notifications</h2>
+        <div class="notification-tabs">
+          <button class="notification-tab active">All</button>
+          <button class="notification-tab">Mentions</button>
+          <button class="notification-tab">Likes</button>
+          <button class="notification-tab">Reposts</button>
+          <button class="notification-tab">Follows</button>
+        </div>
+      </header>
+      
+      <!-- Notifications List -->
+      <div class="notifications-list">
+        <!-- Like Notification -->
+        <div class="notification-item">
+          <div class="notification-icon like">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Jane Smith</strong> liked your post</p>
+              <p class="notification-time">2h ago</p>
+            </div>
+          </div>
+          <div class="notification-post">
+            <p>Just launched our new product! Check it out and let me know what you think. #ProductLaunch #Excited</p>
+          </div>
+        </div>
+        
+        <!-- Follow Notification -->
+        <div class="notification-item">
+          <div class="notification-icon follow">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Tech Insider</strong> followed you</p>
+              <p class="notification-time">5h ago</p>
+            </div>
+          </div>
+          <div class="notification-action">
+            <button class="btn btn-secondary follow-btn">Follow Back</button>
+          </div>
+        </div>
+        
+        <!-- Repost Notification -->
+        <div class="notification-item">
+          <div class="notification-icon repost">
+            <i class="fas fa-retweet"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Alex Johnson</strong> reposted your post</p>
+              <p class="notification-time">1d ago</p>
+            </div>
+          </div>
+          <div class="notification-post">
+            <p>Just finished reading an amazing book on design principles. Highly recommend! 📚 #DesignThinking #UXDesign</p>
+          </div>
+        </div>
+        
+        <!-- Multiple Likes Notification -->
+        <div class="notification-item">
+          <div class="notification-icon like">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Jane Smith</strong> and 12 others liked your post</p>
+              <p class="notification-time">2d ago</p>
+            </div>
+          </div>
+          <div class="notification-post">
+            <p>Excited to announce that I'll be speaking at the upcoming tech conference! #TechConf2023</p>
+          </div>
+        </div>
+        
+        <!-- Mention Notification -->
+        <div class="notification-item">
+          <div class="notification-icon mention">
+            <i class="fas fa-at"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Design Matters</strong> mentioned you in a post</p>
+              <p class="notification-time">3d ago</p>
+            </div>
+          </div>
+          <div class="notification-post">
+            <p>Check out this amazing design by @<%= user.usertag %>! Really impressive work. #DesignInspiration</p>
+          </div>
+        </div>
+        
+        <!-- Comment Notification -->
+        <div class="notification-item">
+          <div class="notification-icon comment">
+            <i class="fas fa-comment"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-avatar-group">
+              <div class="notification-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+            </div>
+            <div class="notification-text">
+              <p><strong>Web Dev Tips</strong> replied to your post</p>
+              <p class="notification-time">4d ago</p>
+            </div>
+          </div>
+          <div class="notification-post">
+            <p>Great insights! I've been using this approach in my projects as well and it's been a game-changer.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <div class="compose-modal" id="compose-modal">
+    <form action="/feed" method="post">
+      <div class="compose-modal-content">
+        <div class="compose-modal-header">
+          <button class="close-modal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="compose-modal-body">
+          <div class="compose-avatar">
+            <img src="/images/default.png" alt="User Avatar">
+          </div>
+          <div class="compose-input-container">
+            <textarea placeholder="What's happening?" maxlength="280" name="text" required></textarea>
+            <div class="audience-selector">
+              <button>
+                <i class="fas fa-globe"></i>
+                <span>Everyone can reply</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+            </div>
+            <div class="compose-actions">
+              <div class="compose-tools">
+                <button type="button" title="Media">
+                  <i class="fas fa-image"></i>
+                </button>
+                <button type="button" title="GIF">
+                  <i class="fas fa-film"></i>
+                </button>
+                <button type="button" title="Poll">
+                  <i class="fas fa-poll-h"></i>
+                </button>
+                <button type="button" title="Emoji">
+                  <i class="far fa-smile"></i>
+                </button>
+                <button type="button" title="Schedule">
+                  <i class="far fa-calendar-alt"></i>
+                </button>
+                <button type="button" title="Location">
+                  <i class="fas fa-map-marker-alt"></i>
+                </button>
+              </div>
+              <div class="compose-submit">
+                <span class="character-count">280</span>
+                <button class="btn btn-primary post-btn" type="submit" disabled>Post</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/emoji.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
+</body>
+</html>
+

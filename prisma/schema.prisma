@@ -1,0 +1,242 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationType {
+  LIKE_POST
+  LIKE_COMMENT
+  REPLY
+  NEW_FOLLOWER
+  REPOST_POST
+  MESSAGE
+  TAG
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email             String    @unique
+  username          String    @unique
+  usertag           String    @unique
+  password          String
+  passwordChangedAt DateTime?
+
+  coverImage    String?
+  image         String?
+  
+  bio      String?
+  location String?
+  website  String?
+
+  // Relations
+  posts          Post[]
+  comments       Comment[]
+  postLikes      PostLike[]
+  commentLikes   CommentLike[]
+  postReposts    PostRepost[]
+  commentReposts CommentRepost[]
+
+  followers             Follow[]       @relation("followers")
+  following             Follow[]       @relation("following")
+  receivedNotifications Notification[] @relation("receivedNotifications")
+  sentNotifications     Notification[] @relation("sentNotifications")
+  Participant           Participant[]
+  Message               Message[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  text  String  @db.VarChar(280)
+  image String?
+
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  comments      Comment[]
+  likes         PostLike[]
+  reposts       PostRepost[]
+  notifications Notification[]
+
+  // Indexes
+  @@index([userId])
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  text String @db.VarChar(280)
+
+  // Relations
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  post          Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId        Int
+  likes         CommentLike[]
+  reposts       CommentRepost[]
+  notifications Notification[]
+
+  // Indexes
+  @@index([userId])
+  @@index([postId])
+}
+
+// Like tracking models
+model PostLike {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+
+  @@unique([userId, postId])
+  // Indexes
+  @@index([postId])
+}
+
+model CommentLike {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int
+
+  @@unique([userId, commentId])
+  // Indexes
+  @@index([commentId])
+}
+
+// Repost tracking models
+model PostRepost {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+
+  @@unique([userId, postId])
+  // Indexes
+  @@index([postId])
+}
+
+model CommentRepost {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int
+
+  @@unique([userId, commentId])
+  // Indexes
+  @@index([commentId])
+}
+
+// Follow model
+model Follow {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  follower    User @relation("following", fields: [followerId], references: [id])
+  followerId  Int
+  following   User @relation("followers", fields: [followingId], references: [id])
+  followingId Int
+
+  @@unique([followerId, followingId])
+  // Indexes
+  @@index([followerId])
+  @@index([followingId])
+}
+
+// Notifications model
+model Notification {
+  id        Int              @id @default(autoincrement())
+  createdAt DateTime         @default(now())
+  type      NotificationType
+  read      Boolean          @default(false)
+
+  
+  recipient   User @relation("receivedNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId Int
+
+  
+  sender   User @relation("sentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId Int
+
+
+  post   Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int?
+
+
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int?
+
+
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId Int?
+
+  // Indexes 
+  @@index([recipientId])
+  @@index([read])
+  @@index([senderId])
+  @@index([postId])
+  @@index([commentId])
+  @@index([conversationId])
+}
+
+/// Conversations 
+model Conversation {
+  id           Int           @id @default(autoincrement())
+  participants Participant[]
+  messages     Message[]
+  notifications Notification[]
+  updatedAt    DateTime      @updatedAt
+}
+
+model Participant {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int
+  unreadCount    Int          @default(0)
+  @@unique([userId, conversationId])
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int
+  sender         User         @relation(fields: [senderId], references: [id])
+  senderId       Int
+  content        String?
+  image          String?
+  createdAt      DateTime     @default(now())
+  readAt         DateTime?
+}

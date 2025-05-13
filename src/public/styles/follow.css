@@ -1,0 +1,209 @@
+/* Follow Pages Styles */
+
+.follow-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.back-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  margin-right: 1rem;
+  transition: background-color var(--transition-speed);
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.follow-header-info h1 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.follow-header-info .username {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.follow-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.follow-tab {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  transition: all var(--transition-speed);
+  position: relative;
+}
+
+.follow-tab:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
+}
+
+.follow-tab.active {
+  color: var(--color-text);
+}
+
+.follow-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4rem;
+  height: 4px;
+  background-color: var(--color-primary);
+  border-radius: 4px 4px 0 0;
+}
+
+.follow-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.follow-item {
+  display: flex;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-speed);
+}
+
+.follow-item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.follow-avatar {
+  margin-right: 1rem;
+}
+
+.follow-avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.follow-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.follow-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.follow-name {
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.follow-name:hover {
+  text-decoration: underline;
+}
+
+.follow-username {
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.follow-bio {
+  color: var(--color-text);
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.follow-btn {
+  min-width: 100px;
+  border-radius: 9999px;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.follow-btn:hover:not(.btn-secondary) {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-secondary.follow-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border-color: transparent;
+}
+
+.self-indicator {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+.no-follows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.no-follows-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.no-follows h3 {
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .follow-btn {
+    min-width: 80px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .follow-avatar img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .follow-bio {
+    -webkit-line-clamp: 1;
+  }
+
+  .follow-btn {
+    min-width: 70px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}

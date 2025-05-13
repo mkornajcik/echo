@@ -1,0 +1,78 @@
+<!-- Profile Header -->
+<div class="profile-header">
+  <div class="profile-cover">
+    <img src="<%= user.coverImage || '/images/default-banner.png' %>" alt="Cover Image">
+    <% if (reqUser && user.id === reqUser.id) { %>
+      <input type="file" id="cover-upload" accept="image/*" hidden>
+      <button class="edit-cover-btn">
+        <i class="fas fa-camera"></i>
+      </button>
+    <% } %>
+  </div>
+  
+  <div class="profile-info">
+    <div class="profile-avatar">
+      <img src="<%= user.image || '/images/default.png' %>" alt="<%= user.username %>'s Avatar">
+      <% if (reqUser && user.id === reqUser.id) { %>
+        <input type="file" id="avatar-upload" accept="image/*" hidden>
+        <button class="edit-avatar-btn">
+          <i class="fas fa-camera"></i>
+        </button>
+      <% } %>
+    </div>
+    
+    <div class="profile-actions">
+      <% if (reqUser && user.id === reqUser.id) { %>
+        <button class="btn btn-secondary edit-profile-btn" data-user-id="<%= user.id %>">Edit Profile</button>
+      <% } else if (reqUser) { %>
+        <div class="profile-action-buttons">
+          <button class="btn message-user-btn" data-target-id="<%= user.id %>">
+            <i class="fas fa-envelope"></i> Message
+          </button>
+          <button class="btn <%= isCurrentUserFollowing ? 'btn-secondary' : 'btn-primary' %> follow-btn"
+                  data-user-id="<%= user.id %>"
+                  data-is-following="<%= isCurrentUserFollowing %>">
+            <%= isCurrentUserFollowing ? 'Following' : 'Follow' %>
+          </button>
+        </div>
+      <% } else { %>
+        <button class="btn btn-primary" disabled title="Log in to follow">Follow</button>
+      <% } %>
+    </div>
+    
+    <div class="profile-details">
+      <h1 class="profile-name"><%= user.username %></h1>
+      <p class="profile-username">@<%= user.usertag %></p>
+      
+      <div class="profile-bio">
+        <p><%= user.bio || "Welcome to my Echo profile! This is where I share my thoughts and connect with others." %></p>
+      </div>
+      
+      <div class="profile-meta">
+        <div class="profile-meta-item location">
+          <i class="fas fa-map-marker-alt"></i>
+          <span><%= user.location || "Helsinki, Finland" %></span>
+        </div>
+        <div class="profile-meta-item website">
+          <i class="fas fa-link"></i>
+          <a href="<%= user.website || 'https://example.com' %>" target="_blank"><%= user.website || "https://example.com" %></a>
+        </div>
+        <div class="profile-meta-item">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Joined <%= formatTime(user.createdAt) %></span>
+        </div>
+      </div>
+      
+      <div class="profile-stats">
+        <a href="/profile/<%= user.id %>/following" class="profile-stat">
+          <span class="stat-value" id="profile-following-count"><%= user._count.following %></span>
+          <span class="stat-label">Following</span>
+        </a>
+        <a href="/profile/<%= user.id %>/followers" class="profile-stat">
+          <span class="stat-value" id="profile-follower-count"><%= user._count.followers %></span>
+          <span class="stat-label">Followers</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

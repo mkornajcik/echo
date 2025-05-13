@@ -1,0 +1,31 @@
+<div class="compose-modal" id="compose-modal">
+  <form class="" action="/feed" method="post">
+
+  <div class="compose-modal-content">
+    <div class="compose-modal-header">
+      <button class="close-modal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="compose-modal-body">
+      <div class="compose-avatar">
+        <img src="<%= reqUser.image || '/images/default.png' %>" alt="User Avatar">
+      </div>
+      <div class="compose-input-container">
+        <textarea placeholder="What's happening?" maxlength="280" name="text" id="text" required></textarea>
+        <div class="compose-actions">
+          <div class="compose-tools">
+            <button title="Emoji">
+              <i class="far fa-smile"></i>
+            </button>
+          </div>
+          <div class="compose-submit">
+            <span class="character-count">280</span>
+            <button class="btn btn-primary post-btn" type="submit" disabled>Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>

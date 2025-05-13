@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post | <%= post.user.username %></title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/post.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <h2>Post</h2>
+        <div class="feed-tabs">
+          <a href="/feed" class="feed-tab">Back to Feed</a>
+        </div>
+      </header>  
+      <!-- Feed -->
+      <div class="feed">
+        <!-- Single Post -->
+        <article class="post single-post">
+            <div class="post-avatar">
+              <img src="/images/default.png" alt="User Avatar">
+            </div>
+            <div class="post-content">
+              <div class="post-header">
+                <div class="post-user-info">
+                  <h3><%= post.user.username %></h3>
+                  <span class="username">@<%= post.user.usertag %></span>
+                  <span class="post-time">· <%= formatTime(post.createdAt) %></span>
+                </div>
+                <% if (post.user.id === user.id) { %>
+                  <div style="display: flex;">
+                    <button class="post-menu" id="deletePostButton">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <% } %>
+              </div>
+              <div class="post-text">
+                <p><%= post.text %></p>
+              </div>
+              <% if (post.image) { %>
+              <div class="post-image">
+                <img src="<%= post.image %>" alt="Post image">
+              </div>
+              <% } %>
+              <div class="post-actions">
+                <button class="post-action comment">
+                  <i class="far fa-comment"></i>
+                  <span><%= post.comments ? post.comments.length : 0 %></span>
+                </button>
+                <button class="post-action repost" data-id="<%= post.id %>">
+                  <i class="fas fa-retweet"></i>
+                  <span><%= post._count?.reposts || 0 %></span>
+                </button>
+                <button class="post-action like" data-id="<%= post.id %>">
+                  <i class="<%= post.likes.length > 0 ? 'fas' : 'far' %> fa-heart"></i>
+                  <span><%= post._count?.likes || 0 %></span>
+                </button>
+                <button class="post-action share">
+                  <i class="far fa-share-square"></i>
+                </button>
+              </div>
+            </div>
+        </article>
+        
+        <!-- Comment Section -->
+        <div class="comment-section">
+          <!-- Comment Form -->
+          <form class="comment-form" action="/feed/post/<%= post.id %>" method="post">
+            <div class="comment-avatar">
+              <img src="/images/default.png" alt="User Avatar">
+            </div>
+            <div class="comment-input-container">
+              <textarea name="commentText" placeholder="Add a comment..." required maxlength="280"></textarea>
+              <div class="comment-actions">
+                <div class="comment-tools">
+                  <button type="button" title="Media">
+                    <i class="fas fa-image"></i>
+                  </button>
+                  <button type="button" title="Emoji">
+                    <i class="far fa-smile"></i>
+                  </button>
+                </div>
+                <button type="submit" class="btn btn-primary comment-btn">Reply</button>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Comments List -->
+          <div class="comments-list">
+            <h3 class="comments-header">Comments (<%= post.comments ? post.comments.length : 0 %>)</h3>
+            
+            <% if (post.comments && post.comments.length > 0) { %>
+              <% post.comments.forEach(comment => { %>
+                <div class="comment" data-id="<%= comment.id %>">
+                  <div class="comment-avatar">
+                    <img src="/images/default.png" alt="User Avatar">
+                  </div>
+                  <div class="comment-content">
+                    <div class="comment-header">
+                      <div class="comment-user-info">
+                        <% if (comment.user) { %>
+                          <h4><%= comment.user.username %></h4>
+                          <span class="username">@<%= comment.user.usertag %></span>
+                        <% } else { %>
+                          <h4>Unknown User</h4>
+                          <span class="username">@unknown</span>
+                        <% } %>
+                        <span class="comment-time">· <%= formatTime(comment.createdAt) %></span>
+                      </div>
+                      <% if (comment.user.id === user.id) { %>
+                        <button class="post-menu" id="deleteCommentButton" data-id="<%= comment.id %>">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      <% } %>
+                    </div>
+                    <div class="comment-text">
+                      <p><%= comment.text %></p>
+                    </div>
+                    <div class="comment-actions-buttons">
+                      <button class="comment-action like" data-comment-id="<%= comment.id %>">
+                        <i class="<%= comment.likes && comment.likes.some(like => like.userId === user.id) ? 'fas' : 'far' %> fa-heart"></i>
+                        <span><%= comment._count?.likes || 0 %></span>
+                      </button>
+                      <button class="comment-action reply">
+                        <i class="far fa-comment"></i>
+                        <span>Reply</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="no-comments">
+                <p>No comments yet. Be the first to comment!</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/post.js"></script>
+  <script type="module" src="/js/emoji.js"></script>
+  <script type="module" src="/js/likes.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+ <!-- Left Sidebar -->
+ <aside class="sidebar left-sidebar">
+  <div class="logo">
+    <a href="/"><img src="/images/echo-logo.png" alt="Logo"></a>
+    <h1>Echo</h1>
+  </div>
+  
+  <nav class="main-nav">
+    <ul>
+      <li class="active">
+        <a href="/feed">
+          <i class="fas fa-home"></i>
+          <span>Feed</span>
+        </a>
+      </li>
+      <li>
+        <a href="/notifications">
+          <i class="fas fa-bell"></i>
+          <span>Notifications</span>
+          <span class="notification-badge">3</span>
+        </a>
+      </li>
+      <li>
+        <a href="/messages">
+          <i class="fas fa-envelope"></i>
+          <span>Messages</span>
+        </a>
+      </li>
+      <li>
+        <a href="/profile/<%= reqUser.id %>">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  <button class="btn btn-primary btn-full compose-btn">
+    <i class="fas fa-solid fa-wave-square"></i>
+    <span>Resonate</span>
+  </button>
+  
+  <a href="/profile/<%= reqUser.id %>">
+    <div class="user-profile">
+      <div class="user-avatar">
+        <img src="/images/default.png" alt="User Avatar">
+      </div>
+      <div class="user-info">
+        <h3><%= reqUser.username %></h3>
+        <p>@<%= reqUser.usertag %></p>
+      </div>
+      <button class="menu-dots">
+        <i class="fas fa-ellipsis-h"></i>
+      </button>
+    </div>
+  </a>
+  
+</aside>

@@ -1,0 +1,33 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
+const viewRoutes_1 = __importDefault(require("./routes/viewRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const appError_1 = __importDefault(require("./utils/appError"));
+const cors_1 = __importDefault(require("cors"));
+const compression_1 = __importDefault(require("compression"));
+const errorMiddleware = require("./middlewares/errorMiddleware");
+const formatTime = require("./middlewares/formatTime");
+const app = (0, express_1.default)();
+app.set("view engine", "ejs");
+app.set("views", path_1.default.join(__dirname, "views"));
+app.use(formatTime);
+app.use((0, cors_1.default)());
+app.options("*", (0, cors_1.default)());
+app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
+app.use((0, compression_1.default)());
+app.use("/", viewRoutes_1.default);
+app.use("/auth", userRoutes_1.default);
+app.all("*", (req, res, next) => {
+    next(new appError_1.default(`Cannot locate ${req.originalUrl} on this server!`, 404, true));
+});
+app.use(errorMiddleware);
+exports.default = app;

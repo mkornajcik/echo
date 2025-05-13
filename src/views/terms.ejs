@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Echo</title>
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/terms.css">
+
+</head>
+<body>
+<div class="container terms-container">
+  <%- include('partials/header') %>
+  <!-- Hero Section -->
+  <section class="terms-hero">
+    <div class="terms-hero-content">
+      <h1>Terms, Privacy, and Cookies</h1>
+      <p class="terms-subtitle">Last updated: <%= new Date().toLocaleDateString() %></p>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="terms-navigation">
+    <div class="terms-nav-inner">
+      <ul class="terms-nav-list">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#terms">Terms of Service</a></li>
+        <li><a href="#privacy">Privacy Policy</a></li>
+        <li><a href="#cookies">Cookie Policy</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section id="introduction" class="terms-section">
+    <div class="terms-section-inner">
+      <h2>Introduction</h2>
+      <div class="terms-content">
+        <p>Welcome to our platform. These Terms of Service, Privacy Policy, and Cookie Policy govern your use of our website and services. By accessing or using our platform, you agree to be bound by these policies.</p>
+        <p>We encourage you to read these documents carefully to understand our practices regarding your personal data and how we will treat it. If you do not agree with our policies, please do not use our platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms of Service -->
+  <section id="terms" class="terms-section alt-bg">
+    <div class="terms-section-inner">
+      <h2>Terms of Service</h2>
+      
+      <div class="terms-subsection">
+        <h3>1. Acceptance of Terms</h3>
+        <p>By accessing or using our services, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing our services.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>2. User Accounts</h3>
+        <p>To use certain features of our platform, you may be required to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.</p>
+        <p>You agree to provide accurate and complete information when creating your account and to update your information to keep it accurate and current.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>3. User Content</h3>
+        <p>Our platform allows users to post, link, store, share, and otherwise make available certain information, text, graphics, videos, or other material. You retain any rights that you may have in your user content.</p>
+        <p>By posting content on our platform, you grant us a non-exclusive, royalty-free, transferable, sublicensable, worldwide license to use, store, display, reproduce, modify, create derivative works, perform, and distribute your content on our platform.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>4. Prohibited Activities</h3>
+        <p>You agree not to engage in any of the following prohibited activities:</p>
+        <ul>
+          <li>Violating any laws or regulations</li>
+          <li>Infringing on the intellectual property rights of others</li>
+          <li>Posting defamatory, obscene, or offensive content</li>
+          <li>Harassing, threatening, or intimidating other users</li>
+          <li>Using our platform to distribute malware or other harmful code</li>
+          <li>Attempting to gain unauthorized access to our systems or user accounts</li>
+        </ul>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>5. Termination</h3>
+        <p>We reserve the right to terminate or suspend your account and access to our services at our sole discretion, without notice, for conduct that we believe violates these Terms of Service or is harmful to other users, us, or third parties, or for any other reason.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Policy -->
+  <section id="privacy" class="terms-section">
+    <div class="terms-section-inner">
+      <h2>Privacy Policy</h2>
+      
+      <div class="terms-subsection">
+        <h3>1. Information We Collect</h3>
+        <p>We collect several types of information from and about users of our platform, including:</p>
+        <ul>
+          <li>Personal information you provide when registering or updating your account (name, email, etc.)</li>
+          <li>Information about your activity on our platform</li>
+          <li>Device and connection information</li>
+          <li>Information collected through cookies and similar technologies</li>
+        </ul>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>2. How We Use Your Information</h3>
+        <p>We use the information we collect to:</p>
+        <ul>
+          <li>Provide, maintain, and improve our services</li>
+          <li>Process transactions and send related information</li>
+          <li>Send you technical notices, updates, security alerts, and support messages</li>
+          <li>Respond to your comments, questions, and requests</li>
+          <li>Monitor and analyze trends, usage, and activities in connection with our services</li>
+          <li>Detect, investigate, and prevent fraudulent transactions and other illegal activities</li>
+        </ul>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>3. Information Sharing</h3>
+        <p>We do not share your personal information with third parties except in the following circumstances:</p>
+        <ul>
+          <li>With your consent</li>
+          <li>With service providers who perform services on our behalf</li>
+          <li>To comply with legal obligations</li>
+          <li>To protect the rights, property, or safety of our users, ourselves, or others</li>
+        </ul>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>4. Data Security</h3>
+        <p>We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>5. Your Rights</h3>
+        <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
+        <ul>
+          <li>The right to access your personal information</li>
+          <li>The right to correct inaccurate information</li>
+          <li>The right to delete your information</li>
+          <li>The right to restrict or object to processing</li>
+          <li>The right to data portability</li>
+        </ul>
+        <p>To exercise these rights, please contact us using the information provided in the Contact section.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cookie Policy -->
+  <section id="cookies" class="terms-section alt-bg">
+    <div class="terms-section-inner">
+      <h2>Cookie Policy</h2>
+      
+      <div class="terms-subsection">
+        <h3>1. What Are Cookies</h3>
+        <p>Cookies are small text files that are placed on your device when you visit our website. They allow us to recognize your device and remember certain information about your visit, such as your preferences and actions on our site.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>2. Types of Cookies We Use</h3>
+        <p>We use the following types of cookies:</p>
+        <ul>
+          <li><strong>Essential Cookies:</strong> These cookies are necessary for the website to function properly and cannot be switched off in our systems.</li>
+          <li><strong>Performance Cookies:</strong> These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site.</li>
+          <li><strong>Functionality Cookies:</strong> These cookies enable the website to provide enhanced functionality and personalization.</li>
+          <li><strong>Targeting Cookies:</strong> These cookies may be set through our site by our advertising partners to build a profile of your interests.</li>
+        </ul>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>3. Managing Cookies</h3>
+        <p>Most web browsers allow you to control cookies through their settings preferences. However, if you limit the ability of websites to set cookies, you may worsen your overall user experience and/or lose the ability to access certain features of our website.</p>
+      </div>
+      
+      <div class="terms-subsection">
+        <h3>4. Third-Party Cookies</h3>
+        <p>Some cookies are placed by third parties on our behalf. These third parties may include analytics providers, advertising networks, and social media platforms. These third parties may use cookies, web beacons, and similar technologies to collect information about your use of our website and other websites.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="terms-section">
+    <div class="terms-section-inner">
+      <h2>Contact</h2>
+      <div class="contact-info">
+        <p>If you have any questions, please contact me at:</p>
+        <p><strong>Email:</strong> marko.kornajcik6@gmail.com</p>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</div>
+
+<script src="/js/terms.js"></script>
+
+</body>
+</html>

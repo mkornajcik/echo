@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/notifications.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <h2>Notifications</h2>
+        
+        <div class="notification-tabs">
+          <button class="notification-tab active">All</button>
+          <button class="notification-tab">Mentions</button>
+          <button class="notification-tab">Likes</button>
+          <button class="notification-tab">Reposts</button>
+          <button class="notification-tab">Follows</button>
+          <button class="notification-tab">Messages</button>
+        </div>
+      </header>
+      
+      <!-- Notifications List -->
+      <div class="notifications-list">
+        <button class="btn btn-secondary btn-mark-as-read" id="markAsReadButton">Mark all as read</button>
+        <!-- Like Notification -->
+        <% notifications.forEach(notification => { %>
+          <%- include("partials/notificationPartial", { notification, reqUser, formatTime }) %>
+        <% }) %>
+        
+
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
+  <script type="module" src="/js/formatTime.js"></script> 
+</body>
+</html>
+

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= user.username %> | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/profile.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="/styles/emoji.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-cover">
+          <img src="/images/default-banner.png" alt="Cover Image">
+          <button class="edit-cover-btn">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+        
+        <div class="profile-info">
+          <div class="profile-avatar">
+            <img src="/images/default.png" alt="<%= user.username %>'s Avatar">
+            <button class="edit-avatar-btn">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
+          
+          <div class="profile-actions">
+            <% if (user.id === reqUser.id) { %>
+            <button class="btn btn-secondary edit-profile-btn">Edit Profile</button>
+            <% } %>
+          </div>
+          
+          <div class="profile-details">
+            <h1 class="profile-name"><%= user.username %></h1>
+            <p class="profile-username">@<%= user.usertag %></p>
+            
+            <div class="profile-bio">
+              <p><%= user.bio || "Welcome to my Echo profile! This is where I share my thoughts and connect with others." %></p>
+            </div>
+            
+            <div class="profile-meta">
+              <div class="profile-meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span><%= user.location || "Helsinki, Finland" %></span>
+              </div>
+              <div class="profile-meta-item">
+                <i class="fas fa-link"></i>
+                <a href="<%= user.website || 'https://example.com' %>" target="_blank"><%= user.website || "https://example.com" %></a>
+              </div>
+              <div class="profile-meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Joined <%= user.createdAt %></span>
+              </div>
+            </div>
+            
+            <div class="profile-stats">
+              <a href="/profile/<%= user.id %>/following" class="profile-stat">
+                <span class="stat-value" id="profile-following-count"><%= user._count.following %></span>
+                <span class="stat-label">Following</span>
+              </a>
+              <a href="/profile/<%= user.id %>/followers" class="profile-stat">
+                <span class="stat-value" id="profile-follower-count"><%= user._count.followers %></span>
+                <span class="stat-label">Followers</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Profile Tabs -->
+      <div class="profile-tabs">
+        <a class="profile-tab" href="/profile/<%= user.id %>">Posts</a>
+        <a class="profile-tab" href="/profile/<%= user.id %>/comments">Replies</a>
+        <a class="profile-tab active" href="/profile/<%= user.id %>/reposts">Reposts</a>
+        <a class="profile-tab" href="/profile/<%= user.id %>/likes">Likes</a>
+      </div>
+      
+      <!-- Profile Feed -->
+      <div class="feed">
+        <% if (user.postReposts.length > 0) { %>
+          <% user.postReposts.forEach(postRepost => { %>
+            <article class="post">
+              <a href="/feed/post/<%= postRepost.postId %>" class="post-link"></a>
+              <div class="post-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+              <div class="post-content">
+                <div class="post-header">
+                  <div class="post-user-info">
+                    <h3><%= postRepost.post.user.username %></h3>
+                    <span class="username">@<%= postRepost.post.user.usertag %></span>
+                    <span class="post-time">· <%= formatTime(postRepost.post.createdAt) %></span>
+                  </div>
+                  <button class="post-menu">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+                <div class="post-text">
+                  <p><%= postRepost.post.text %></p>
+                </div>
+                <% if (postRepost.post.image) { %>
+                <div class="post-image">
+                  <img src="<%= postRepost.post.image %>" alt="Post image">
+                </div>
+                <% } %>
+                <div class="post-actions">
+                  <button class="post-action repost" data-id="<%= postRepost.post.id %>">
+                    <i class="fas fa-retweet"></i>
+                    <span><%= postRepost.post._count.reposts || 0 %></span>
+                  </button>
+                  <button class="post-action like" data-id="<%= postRepost.post.id %>">
+                    <i class="far fa-heart"></i>
+                    <span><%= postRepost.post._count.likes || 0 %></span>
+                  </button>
+                  <button class="post-action share">
+                    <i class="far fa-share-square"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+          <% user.commentReposts.forEach(commentRepost => { %>
+            <article class="post">
+              <a href="/feed/post/<%= commentRepost.comment.postId %>" class="post-link"></a>
+              <div class="post-avatar">
+                <img src="/images/default.png" alt="User Avatar">
+              </div>
+              <div class="post-content">
+                <div class="post-header">
+                  <div class="post-user-info">
+                    <h3><%= commentRepost.comment.user.username %></h3>
+                    <span class="username">@<%= commentRepost.comment.user.usertag %></span>
+                    <span class="post-time">· <%= formatTime(commentRepost.comment.createdAt) %></span>
+                  </div>
+                  <button class="post-menu">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+                <div class="post-text">
+                  <p><%= commentRepost.comment.text %></p>
+                </div>
+                <div class="post-actions">
+                  <button class="post-action repost">
+                    <i class="fas fa-retweet"></i>
+                    <span><%= commentRepost.comment._count.reposts || 0 %></span>
+                  </button>
+                  <button class="post-action like">
+                    <i class="far fa-heart"></i>
+                    <span><%= commentRepost.comment._count.likes || 0 %></span>
+                  </button>
+                  <button class="post-action share">
+                    <i class="far fa-share-square"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <div class="no-posts">
+            <div class="no-posts-icon">
+              <i class="far fa-comment-dots"></i>
+            </div>
+            <h3>No reposts yet</h3>
+            <p>When you repost a post, it will show up here.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+  
+  <!-- Edit Profile Modal -->
+  <div class="modal" id="edit-profile-modal">
+    <form action="/profile/<%= user.id %>" method="POST">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="close-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-profile-form">
+          <div class="form-group">
+            <label for="display-name">Name</label>
+            <input type="text" id="display-name" name="username" value="<%= user.username %>" maxlength="50">
+            <div class="character-counter">50</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" maxlength="160"><%= user.bio || "Welcome to my Echo profile! This is where I share my thoughts and connect with others." %></textarea>
+            <div class="character-counter">160</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="<%= user.location || 'Helsinki, Finland' %>" maxlength="30">
+            <div class="character-counter">30</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="website">Website</label>
+            <input type="url" id="website" name="website" value="<%= user.website || 'https://example.com' %>" maxlength="100">
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/feed.js"></script>
+  <script type="module" src="/js/emoji.js"></script>
+  <script type="module" src="/js/profile.js"></script>
+  <script type="module" src="/js/likes.js"></script>
+</body>
+</html>
+

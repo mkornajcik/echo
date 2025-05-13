@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= user.username %>'s Following | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/profile.css">
+  <link rel="stylesheet" href="/styles/follow.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="feed-container">
+    <!-- Left Sidebar -->
+    <%- include("partials/leftSideNav") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="follow-header">
+        <a href="javascript:history.back()" class="back-button">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="follow-header-info">
+          <h1><%= user.username %></h1>
+          <p class="username">@<%= user.usertag %></p>
+        </div>
+      </div>
+      
+      <div class="follow-tabs">
+        <a href="/profile/<%= user.id %>/followers" class="follow-tab">Followers</a>
+        <a href="/profile/<%= user.id %>/following" class="follow-tab active">Following</a>
+      </div>
+      
+      <div class="follow-list">
+        <% if (following && following.length > 0) { %>
+          <% following.forEach(follow => { %>
+            <div class="follow-item">
+              <div class="follow-avatar">
+                <a href="/profile/<%= follow.following.id %>">
+                  <img src="/images/default.png" alt="<%= follow.following.username %>'s Avatar">
+                </a>
+              </div>
+              <div class="follow-info">
+                <div class="follow-user-details">
+                  <a href="/profile/<%= follow.following.id %>" class="follow-name"><%= follow.following.username %></a>
+                  <a href="/profile/<%= follow.following.id %>" class="follow-username">@<%= follow.following.usertag %></a>
+                  <% if (follow.following.bio) { %>
+                    <p class="follow-bio"><%= follow.following.bio %></p>
+                  <% } %>
+                </div>
+                <% if (reqUser && reqUser.id !== follow.following.id) { %>
+                  <button class="btn <%= follow.isFollowing ? 'btn-secondary' : 'btn-primary' %> follow-btn"
+                          data-user-id="<%= follow.following.id %>"
+                          data-is-following="<%= follow.isFollowing %>">
+                    <%= follow.isFollowing ? 'Following' : 'Follow' %>
+                  </button>
+                <% } else if (reqUser && reqUser.id === follow.following.id) { %>
+                  <span class="self-indicator">You</span>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="no-follows">
+            <div class="no-follows-icon">
+              <i class="far fa-user-circle"></i>
+            </div>
+            <h3>Not following anyone</h3>
+            <p><%= user.id === reqUser?.id ? 'You\'re' : user.username + ' is' %> not following anyone yet.</p>
+          </div>
+        <% } %>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <%- include("partials/rightSideNav") %>
+  </div>
+  
+  <!-- Compose Modal -->
+  <%- include("partials/composeModal") %>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/follow.js"></script>
+</body>
+</html>
+

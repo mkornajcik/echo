@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles/feed.css">
+  <link rel="stylesheet" href="/styles/search.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="layout-container">
+    <!-- Left Sidebar -->
+    <%- include('partials/leftSideNav') %>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Search Header -->
+      <header class="page-header">
+        <div class="back-button">
+          <a href="javascript:history.back()">
+            <i class="fas fa-arrow-left"></i>
+          </a>
+        </div>
+        <div class="search-container">
+          <form action="/search" method="GET" class="search-form">
+            <div class="search-input">
+              <i class="fas fa-search"></i>
+              <input type="text" name="q" placeholder="Search Echo" value="<%= query %>" autofocus>
+              <button type="button" class="clear-search <%= query ? '' : 'hidden' %>">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </header>
+
+      <!-- Search Filters -->
+      <div class="search-filters">
+        <a href="/search?q=<%= query %>&type=all" class="filter-tab <%= type === 'all' ? 'active' : '' %>">
+          All
+        </a>
+        <a href="/search?q=<%= query %>&type=posts" class="filter-tab <%= type === 'posts' ? 'active' : '' %>">
+          Posts
+        </a>
+        <a href="/search?q=<%= query %>&type=users" class="filter-tab <%= type === 'users' ? 'active' : '' %>">
+          People
+        </a>
+      </div>
+
+      <!-- Search Results -->
+      <div class="search-results">
+        <% if (!query) { %>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3>Search for posts and people</h3>
+            <p>Enter a search term to find posts and people on Echo.</p>
+          </div>
+        <% } else if ((type === 'all' || type === 'users') && results.users.length === 0 && 
+                     (type === 'all' || type === 'posts') && results.posts.length === 0) { %>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3>No results found</h3>
+            <p>We couldn't find any results for "<%= query %>".</p>
+            <p>Try searching for something else or check your spelling.</p>
+          </div>
+        <% } else { %>
+          <!-- User Results -->
+          <% if ((type === 'all' || type === 'users') && results.users.length > 0) { %>
+            <div class="results-section">
+              <% if (type === 'all') { %>
+                <h3 class="section-title">People</h3>
+              <% } %>
+              <div class="user-results">
+                <% results.users.forEach(user => { %>
+                  <div class="user-card">
+                    <div class="user-avatar">
+                      <a href="/profile/<%= user.id %>">
+                        <img src="<%= user.image || '/images/default.png' %>" alt="<%= user.username %>'s avatar">
+                      </a>
+                    </div>
+                    <div class="user-info">
+                      <div class="user-name-container">
+                        <a href="/profile/<%= user.id %>" class="user-name">
+                          <h4><%= user.username %></h4>
+                        </a>
+                        <span class="user-tag">@<%= user.usertag %></span>
+                      </div>
+                      <% if (user.bio) { %>
+                        <p class="user-bio"><%= user.bio %></p>
+                      <% } %>
+                      <div class="user-stats">
+                        <span><strong><%= user._count.following %></strong> Following</span>
+                        <span><strong><%= user._count.followers %></strong> Followers</span>
+                      </div>
+                    </div>
+                    <div class="user-action">
+                      <% if (reqUser && reqUser.id !== user.id) { %>
+                        <% if (user.isFollowing) { %>
+                          <button class="btn btn-secondary follow-btn" data-user-id="<%= user.id %>" data-following="true">
+                            Unfollow
+                          </button>
+                        <% } else { %>
+                          <button class="btn btn-primary follow-btn" data-user-id="<%= user.id %>" data-following="false">
+                            Follow
+                          </button>
+                        <% } %>
+                      <% } else if (reqUser && reqUser.id === user.id) { %>
+                        <span class="user-you-badge">You</span>
+                      <% } %>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+              <% if (type === 'all' && results.users.length > 5) { %>
+                <a href="/search?q=<%= query %>&type=users" class="show-more">Show more people</a>
+              <% } %>
+            </div>
+          <% } %>
+
+          <!-- Post Results -->
+          <% if ((type === 'all' || type === 'posts') && results.posts.length > 0) { %>
+            <div class="results-section">
+              <% if (type === 'all') { %>
+                <h3 class="section-title">Posts</h3>
+              <% } %>
+              <div class="post-results">
+                <% results.posts.forEach(post => { %>
+                  <%- include('partials/postPartial', { post }) %>
+                <% }); %>
+              </div>
+              <% if (type === 'all' && results.posts.length > 5) { %>
+                <a href="/search?q=<%= query %>&type=posts" class="show-more">Show more posts</a>
+              <% } %>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <%- include('partials/rightSideNav') %>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/formatTime.js"></script>
+  <script type="module" src="/js/likes.js"></script>
+  <script type="module" src="/js/search.js"></script>
+  <script type="module" src="/js/follow.js"></script>
+</body>
+</html>
+

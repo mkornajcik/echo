@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Echo</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/alerts.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/echo-logo.ico">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2>Connect with the world</h2>
+        <p>Share your thoughts, follow interesting people, and join the conversation.</p>
+        <div class="cta-buttons">
+          <% if (!user) { %>
+            <a href="/login" class="btn btn-primary">Log In</a>
+            <a href="/register" class="btn btn-secondary">Register</a>
+          <% } else { %>
+            <a href="/feed" class="btn btn-primary">Go to Feed</a>
+            <a class="btn btn-secondary" id="logout-btn">Logout</a>
+          <% } %>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="floating-elements">
+          <div class="floating-element" data-speed="2">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="floating-element" data-speed="1.5">
+            <i class="fas fa-retweet"></i>
+          </div>
+          <div class="floating-element" data-speed="3">
+            <i class="fas fa-comment"></i>
+          </div>
+          <div class="floating-element" data-speed="2.5">
+            <i class="fas fa-share"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <h2>Why choose us?</h2>
+      <div class="feature-cards">
+        <div class="feature-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Real-time Messages</h3>
+          <p>Interact with others in real time.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-code"></i>
+          <h3>Modern Design</h3>
+          <p>A clean and intuitive interface.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-users"></i>
+          <h3>Community</h3>
+          <p>Connect with like-minded people and build your network.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+      <h2>What our users say</h2>
+      <div class="testimonial-slider">
+        <div class="testimonial">
+          <p>"This platform has completely changed how I connect with my audience. The interface is intuitive and the features are exactly what I needed."</p>
+          <div class="testimonial-author">
+            <div class="avatar"></div>
+            <span>Alex Johnson</span>
+          </div>
+        </div>
+        <div class="testimonial">
+          <p>"I've tried many social platforms, but this one stands out with its clean design and focus on meaningful interactions."</p>
+          <div class="testimonial-author">
+            <div class="avatar"></div>
+            <span>Maria Garcia</span>
+          </div>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="prev-btn" aria-label="Previous testimonial"><i class="fas fa-chevron-left"></i></button>
+        <button class="next-btn" aria-label="Next testimonial"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta">
+      <h2>Ready to join the conversation?</h2>
+      <p>Sign up today and start connecting with people around the world.</p>
+      <% if (!user) { %>
+        <a href="/register" class="btn btn-large">Get Started</a>
+      <% } else { %>
+        <a href="/feed" class="btn btn-large">Get Started</a>
+      <% } %>
+    </section>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/index.js"></script>
+  <script type="module" src="/js/script.js"></script>
+  <script type="module" src="/js/notifications.js"></script>
+</body>
+</html>
+
+

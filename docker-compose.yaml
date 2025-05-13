@@ -1,0 +1,40 @@
+version: "3"
+services:
+  app:
+    build: .
+    container_name: social-media-app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/social-media-app
+      - JWT_SECRET=9ad45586392db77a79fc6c3e2df62ad2f86b316660f4a639a7535ab1461c8543651e5f66d9ce20de4d1d242ce28ba2a432766472ecfa727bdce85e604726305e650b50c156cb76b8e0ed35b65efe227c8d0ef67910309eecb7fc3a7369746e5d9a0ff7b5b5c23aa1c2a5f774989e6dc67621e2665338d9a783b8b54af9c9a9d6
+      - NODE_ENV=development
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./src/public:/app/dist/public
+      - ./src/views:/app/dist/views
+
+  db:
+    image: postgres:13-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: social-media-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
