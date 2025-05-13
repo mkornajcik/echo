@@ -45,6 +45,8 @@ Echo is a modern, Twitter-like social media app built with TypeScript, Node.js, 
 ---
 
 ## 🖼️ Screenshots & Demo
+![HomePage](https://github.com/user-attachments/assets/065390e8-77d0-498c-95f4-d4f611d53210)
+![ProfilePage](https://github.com/user-attachments/assets/d310ff18-1ddf-422f-b4c9-565ffb88bb80)
 
 ## 🚀 Getting Started
 ### Prerequisites
