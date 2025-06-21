@@ -12,8 +12,21 @@ import viewRoutes from "./viewRoutes";
 import { alerts } from "../controllers/viewController";
 import { addSuggestions } from "../middlewares/suggestions";
 import { addLatestFromFollowing } from "../middlewares/latest";
+import prisma from "../prismaClient";
 
 const router = Router();
+
+// Endpoint for pinging the DB
+router.get("/health", async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1;`;
+
+    res.status(200).json({ status: "ok" });
+  } catch (error) {
+    console.error("Health check failed:", error);
+    res.status(500).json({ status: "error", message: "Database ping failed" });
+  }
+});
 
 // Use alerts
 router.use(alerts);

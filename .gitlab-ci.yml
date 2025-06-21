@@ -1,7 +1,26 @@
-ping_database:
+stages:
+  - ping
+
+# Job: Ping the /health endpoint to keep Supabase alive
+ping_health_endpoint:
   image: curlimages/curl:latest
   stage: ping
   rules:
+    # Run only when triggered by a scheduled pipeline
     - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: on_success
+    # Also allow manual triggering from the GitLab
+    - when: manual
   script:
-    - curl --fail https://social-echo.up.railway.app/health
+    # Use the HEALTHCHECK_URL variable set in CI/CD settings
+    - |
+      echo "Pinging health endpoint: $HEALTHCHECK_URL"
+      if curl --fail --retry 3 --retry-delay 5 "$HEALTHCHECK_URL"; then
+        echo "✅ Health endpoint responded OK."
+      else
+        echo "❌ Health endpoint FAILED."
+        exit 1
+      fi
+
+  allow_failure: false
+  timeout: 2m
