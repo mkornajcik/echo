@@ -1,0 +1,22 @@
+stages:
+  - ping
+
+variables:
+  NODE_ENV: production
+
+# A job that pings the DB
+ping_database:
+  image: node:18-alpine
+  stage: ping
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: manual
+  before_script:
+    - apk add --no-cache build-base python
+    - npm ci
+    - npx prisma generate
+  script:
+    - npx ts-node --transpile-only scripts/ping-db.ts
+
+  allow_failure: false
+  timeout: 5m

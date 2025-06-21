@@ -7,7 +7,8 @@
     "build": "tsc --build",
     "start": "node ./dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.ts",
-    "prod": "cross-env NODE_ENV=production node ./dist/server.js"
+    "prod": "cross-env NODE_ENV=production node ./dist/server.js",
+    "ping-db": "ts-node --transpile-only ./src/scripts/ping-db.ts"
   },
   "author": "Marko Kornajcik",
   "license": "ISC",
