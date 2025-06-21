@@ -1,21 +1,7 @@
-stages:
-  - ping
-
-variables:
-  NODE_ENV: production
-
-# A job that pings the DB
 ping_database:
-  image: node:18-alpine
+  image: curlimages/curl:latest
   stage: ping
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
-    - when: manual
-  before_script:
-    - npm ci
-    - npx prisma generate
   script:
-    - npx ts-node --transpile-only scripts/ping-db.ts
-
-  allow_failure: false
-  timeout: 5m
+    - curl --fail https://social-echo.up.railway.app/health

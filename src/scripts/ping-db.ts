@@ -1,17 +1,16 @@
+import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
+const router = Router();
+const prisma = new PrismaClient();
 
-async function main() {
-  const prisma = new PrismaClient();
+router.get("/health", async (req, res) => {
   try {
-    // Issue a trivial query
     await prisma.$queryRaw`SELECT 1;`;
-    console.log("Ping successful: SELECT 1 returned.");
+    res.status(200).json({ status: "ok" });
   } catch (error) {
-    console.error("Ping failed:", error);
-    process.exitCode = 1;
-  } finally {
-    await prisma.$disconnect();
+    console.error("Health check failed:", error);
+    res.status(500).json({ status: "error", error: String(error) });
   }
-}
+});
 
-main();
+export default router;
