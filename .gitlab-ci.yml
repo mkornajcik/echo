@@ -12,7 +12,6 @@ ping_database:
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - when: manual
   before_script:
-    - apk add --no-cache build-base python
     - npm ci
     - npx prisma generate
   script:
