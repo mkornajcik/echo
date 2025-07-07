@@ -31,12 +31,12 @@ const rateLimit_1 = require("../middlewares/rateLimit");
 const router = (0, express_1.Router)();
 router.get("/health", rateLimit_1.limiter, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield prismaClient_1.default.keepAlive.upsert({
+        const result = yield prismaClient_1.default.keepAlive.upsert({
             where: { id: 1 },
             update: {},
             create: { id: 1 },
         });
-        res.status(200).json({ status: "ok" });
+        res.status(200).json({ status: "Health check success", result });
     }
     catch (error) {
         console.error("Health check failed:", error);
