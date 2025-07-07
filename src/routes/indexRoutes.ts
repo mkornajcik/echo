@@ -20,12 +20,12 @@ const router = Router();
 // Endpoint for pinging the DB
 router.get("/health", limiter, async (req, res) => {
   try {
-    await prisma.keepAlive.upsert({
+    const result = await prisma.keepAlive.upsert({
       where: { id: 1 },
       update: {},
       create: { id: 1 },
     });
-    res.status(200).json({ status: "ok" });
+    res.status(200).json({ status: "Health check success", result });
   } catch (error) {
     console.error("Health check failed:", error);
     res.status(500).json({ status: "error", message: "Database ping failed" });
