@@ -18,6 +18,11 @@ enum NotificationType {
   TAG
 }
 
+model KeepAlive {
+  id        Int      @id @default(autoincrement())
+  lastPing  DateTime @updatedAt
+}
+
 model User {
   id Int @id @default(autoincrement())
 
