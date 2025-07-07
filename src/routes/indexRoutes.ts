@@ -13,11 +13,12 @@ import { alerts } from "../controllers/viewController";
 import { addSuggestions } from "../middlewares/suggestions";
 import { addLatestFromFollowing } from "../middlewares/latest";
 import prisma from "../prismaClient";
+import { limiter } from "../middlewares/rateLimit";
 
 const router = Router();
 
 // Endpoint for pinging the DB
-router.get("/health", async (req, res) => {
+router.get("/health", limiter, async (req, res) => {
   try {
     await prisma.keepAlive.upsert({
       where: { id: 1 },
