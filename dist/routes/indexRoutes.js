@@ -33,7 +33,7 @@ router.get("/health", rateLimit_1.limiter, (req, res) => __awaiter(void 0, void 
     try {
         const result = yield prismaClient_1.default.keepAlive.upsert({
             where: { id: 1 },
-            update: {},
+            update: { lastPing: new Date() },
             create: { id: 1 },
         });
         res.status(200).json({ status: "Health check success", result });

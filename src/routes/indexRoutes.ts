@@ -22,7 +22,7 @@ router.get("/health", limiter, async (req, res) => {
   try {
     const result = await prisma.keepAlive.upsert({
       where: { id: 1 },
-      update: {},
+      update: { lastPing: new Date() },
       create: { id: 1 },
     });
     res.status(200).json({ status: "Health check success", result });
