@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const response = await axios.post("/api/messages/start-conversation", {
+        const response = await axios.post(`/api/messages/start-conversation/${targetId}`, {
           targetUserId: targetId,
         });
 
